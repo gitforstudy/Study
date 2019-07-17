@@ -1,0 +1,13 @@
+DS:
+===
+- Delete last but nth node in singly linkedlist.
+- Optimized circuler linkedlist.
+- Merge two unsorted linkedlist in a sorted order.
+- Ring buffer
+- Find middle node in singly linkedlist without loop.
+- Find loop in a list
+- Stack and queues
+- Reverse the linkedlist
+- Sorting
+- Tree
+

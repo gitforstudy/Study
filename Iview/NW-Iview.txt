@@ -1,0 +1,4 @@
+Linux:
+======
+1. How Scheduling works ?
+2. How context switch happened in Linux?
