@@ -1,14 +1,16 @@
 Wlan:
 =====
 - Scanning procedure in depth in ATH9k
-- What is slave dfs and master dfs
+- what is slave dfs and master dfs
+- How radar will detected in wlan devices
+- Significance of regulatory domain in Wlan
 - Difference in IEEE80211 standards a, b, g, n, ac, ax, ah
 - 4 way handshake
 - What is short gaurd interval
 - CSMA/CA and CSMA/CD
 - What is dcf, pcf concept
 - What is difs, sifs and aifs
-- How QoS packets are queu and transmitted.
+- How QoS packets are queu and transmitted
 - What is BlockAck
 - Difference between AMSDU and AMPDU
  
@@ -196,5 +198,4 @@ Ans: Passive scan can not find the networks which is configured and enabled
      as hidden ssid but it can detect the DFS channel.
      Active scanning can find the hidden network by 
      direct probe request/response.
-     
-4.  
+
