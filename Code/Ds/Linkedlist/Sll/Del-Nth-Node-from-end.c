@@ -73,7 +73,7 @@ struct st *DeleteNode(struct st *head, int delnode)
 struct st *DeleteLastNthNode(struct st *head, int n)
 {
 	struct st *loop = head;
-	struct st *temp, *node;
+	struct st *node;
 
 	node = head;
 	while (loop) {
