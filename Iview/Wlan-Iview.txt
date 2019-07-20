@@ -1,9 +1,9 @@
 Wlan:
 =====
 - Scanning procedure in depth in ATH9k
-- what is slave dfs and master dfs
-- How radar will detected in wlan devices
+- what is slave dfs and master dfs & How radar will detected in wlan devices
 - Significance of regulatory domain in Wlan
+- Channel switch announcement
 - Difference in IEEE80211 standards a, b, g, n, ac, ax, ah
 - 4 way handshake
 - What is short gaurd interval
@@ -175,7 +175,7 @@ BSSBasicRateSet: The basic rate set is the list of data rates that must be
 
 FAQ's [Scanning procedure]:
 ---------------------------
-1.   Difference between Direct prob and Null/Broadcast prob request ?
+a.   Difference between Direct prob and Null/Broadcast prob request ?
 Ans: Direct prob request: A client station that is looking for a specific 
                           SSID sends a probe request with the SSID field set
                           to the specific SSID. If a directed probe request
@@ -188,14 +188,131 @@ Ans: Direct prob request: A client station that is looking for a specific
                           that hear the request should reply by sending a
                           probe response.
                    
-2.   Difference between Beacon frame and Probe response frame ?
+b.   Difference between Beacon frame and Probe response frame ?
 Ans: The information that is contained inside the body of a probe response
      frame is the same information that can be found in a beacon frame, with
      the exception of the traffic indication map (TIM).
 
-3.   Why we need two types of scanning (Active/Passive) ?
+c.   Why we need two types of scanning (Active/Passive) ?
 Ans: Passive scan can not find the networks which is configured and enabled
-     as hidden ssid but it can detect the DFS channel.
-     Active scanning can find the hidden network by 
-     direct probe request/response.
+     as hidden ssid but it can scan DFS channel. Active scanning can find
+     the hidden network by direct probe request/response.
 
+2.   What is dfs, how it works? What is slave dfs and master dfs ?
+Ans: Wi-Fi networks operate in areas of RF spectrum that require no licence
+     to operate. One particular service that shares spectrum with wireless
+     LANs is radar. Some types of radar installation operate in the 5GHz band
+     that is used by Wi-Fi network. This means that they may use some of the
+     same frequencies that are used for Wi-Fi networks. This doesn’t apply to
+     all radar stations that have been deployed; there are many radar
+     installations do not use 5GHz.
+     However, due to the coexistence of both radar and Wi-Fi networks in the 
+     same area of spectrum, the Wi-Fi standard (IEEE 802.11, and dfs added
+     as WiFi regulatory specification amendmen 80211h) was designed to
+     incorporate a spectrum sharing mechanism on 5GHz to ensure that Wi-Fi
+     networks do not operate on frequencies (hence causing interference)
+     that are used by nearby radar stations. This mechanism is known as
+     Dynamic Frequency Selection (DFS) and is designed to mitigate 
+     interference to 5GHz radar by WLANs.
+
+     How Does DFS Work?
+     The main purpose of DFS is to avoid WLAN systems interference with Radar
+     systems. If WLAN AP detects a Radar on current operating channel it 
+     should move to another non Radar detected channel by following set of
+     DFS rules and the STA associated to that AP must move to the channel
+     designated by AP.
+     
+     DFS parameters:
+        Parameters                              value
+        --------------------------------------------------
+        Channel Availability check              60sec
+        Channel move time                       10sec
+        Channel Closing Transmission Time       1sec        
+        Non-Occupancy Period                    30minutes
+        In-Service Monitoring
+     
+     Channel Availability check: Before an AP will use a channel that may be
+     impacted by radar, it will perform a “Channel Availability Check” to
+     check for radar signals on that channel. The AP will listen for 
+     60 seconds for the presence of radar signals. If no radar is detected,
+     then the channel is designated as being an “Available Channel”.
+     
+     In-Service Monitoring: Once an AP is operating on a DFS channel, it has
+     to monitor for the presence of radar signals appearing on that channel.
+     This is known as “In-Service Monitoring”.
+     The AP must continuously monitor its channel for the presence of radar
+     signals. If a radar signal is detected, then the AP must cease 
+     transmissions on the channel within the “Channel Move Time”, which is 
+     10 seconds in the EU/UK.
+     At the end of this period, the AP will have ceased transmissions and
+     moved to a new channel.
+     Prior to moving channels, some WLAN solutions may provide a 
+     “Channel Switch Announcement” 802.11 frame to connected clients to
+     advise them which channel the AP will be moving to. Support for this on
+     both WLAN infrastructure and client equipment seems to be optional from
+     my own observations and should not be relied upon as a reliable method
+     for clients to find the AP on its new channel.
+     Experience shows that there are variations between WLAN solutions around
+     which channels an AP will choose to move to when radar is detected. In
+     some solutions, APs that detect radar will move to channel 36 exclusively.
+     In other solutions, APs will choose to move to any of the available
+     non-DFS channels. Some will jump to any available 5GHz channel they
+     find (DFS or non-DFS). Behaviour in this area seems to be inconsistent
+     and is not defined within the 802.11 standard.
+     
+     Non-Occupancy Period: Once radar has been detected on a channel, then
+     the “Non-Occupancy Period” begins. This is a 30-minute period in which
+     no further transmissions will be made by the AP on the affected channel.
+     At the end of the 30-minute period, most APs will attempt to return to
+     their original channel, subject to a channel availability check.
+     (Again behaviour in this area varies between vendors)
+    
+    Are All 5GHz Channels Subject to DFS?
+    No, not all channels in the 5GHz band are subject to DFS. The channels
+    that are exempt vary from country to country, as dictated by local
+    regulations.
+    DFS is applicable on 5GHz channels. The 5GHz band is divided into several
+    sections referred to Unlicensed information infrastructure (UNII).
+    UNII-1 band is designated for indoor operations.
+    UNII-2 and UNII-2e (extended band) for indoor and outdoor operations.
+    UNII-3 is intended mainly for Radar products and may be used as indoor
+    for long distance RF links WLAN as well.
+       
+    Band	      DFS	          Channel	  Frequency (MHz)
+    ------------------------------------------------------
+    U-NII-1		                  36 – 48	  5170 – 5250
+    U-NII-2A	  DFS required	  52 – 64	  5250 – 5330
+    U-NII-2C	  DFS required    100 – 140	  5490 – 5710
+    U-NII-3		                  149 – 165	  5735 – 5835
+
+
+3.  Channel switch announcement: 
+    ---------------------------- 
+    Once AP detects radar on operating channel, CSA element ID will be
+    included in beacons and probe response to instruct the STA to move to
+    new channel. CSA Element ID is shown in below figure.
+     __________________________________________________________________
+    |         |        |                |             |                |
+    | Element | Length | Channel switch | New channel | Channel switch |
+    |   ID    |        |      mode      |    Number   |      count     |
+    |_________|________|________________|_____________|________________|
+        1        1             1             1               1
+    
+    The slave device should respond to C.S.A element by checking its parameters.
+     - If Channel switch mode is SET slave device shall stop transmit to AP
+     - If Channel switch mode is CLEAR slave doesn't have any dependency on AP
+      for its operation.
+      
+    Length : set to 3 bytes
+    Channel Switch Mode : Indicates any restrictions on transmission until a
+    channel switch. An AP in a BSS or a STA in an IBSS sets the Channel Switch
+    Mode field to either 0 or 1 on transmission. In an MBSS,the Channel Switch
+    Mode Field is reserved
+    New Channel Number: set to the number of the channel to which the STA
+    is moving.
+    Channel Switch Count: for nonmesh STAs, this  field either is set to the
+    number of TBTTs until the STA sending the Channel Switch Announcement
+    element switches to the new channel or is set to 0. A value of 1 indicates
+    that the switch occurs immediately before the next TBTT. A value of 0
+    indicates that the switch occurs at any time after the frame containing
+    the element is transmitted.
