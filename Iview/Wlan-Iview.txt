@@ -287,8 +287,8 @@ Ans: Wi-Fi networks operate in areas of RF spectrum that require no licence
      Band	      DFS	          Channel	  Frequency (MHz)
      ------------------------------------------------------
      U-NII-1		              36 – 48	  5170 – 5250
-     U-NII-2A	  DFS required	  52 – 64	  5250 – 5330
-     U-NII-2C	  DFS required    100 – 140	  5490 – 5710
+     U-NII-2A	  DFS required	      52 – 64	  5250 – 5330
+     U-NII-2C	  DFS required        100 – 140	  5490 – 5710
      U-NII-3		              149 – 165	  5735 – 5835
 
 
@@ -312,8 +312,8 @@ Ans: Once AP detects radar on operating channel, CSA element ID will be
      Length : set to 3 bytes
      Channel Switch Mode : Indicates any restrictions on transmission until a
      channel switch. An AP in a BSS or a STA in an IBSS sets the Channel
-	 Switch Mode field to either 0 or 1 on transmission. In an IBSS, the
-	 Channel Switch  Mode Field is reserved.
+     Switch Mode field to either 0 or 1 on transmission. In an IBSS, the
+     Channel Switch  Mode Field is reserved.
      New Channel Number: set to the number of the channel to which the STA
      is moving.
      Channel Switch Count: for nonmesh STAs, this  field either is set to the
@@ -438,4 +438,191 @@ Ans: Access points are bridges that bridge traffic between mobile stations
      network, the mobile station will not be able to send data until dynamic
      keying and authentication have taken place after the 802.11 Association
      is complete.
+
+6.   4-way handshake
+Ans:
+
+
+
+
+
+7.   Data and management path
+Ans: Data Path: Corresponds to ieee80211 data frames
+     TX Path:
+     --------
+     - User space Application -> Create Socket -> Bind it to interface
+       (e.g.: Ethernet or Wifi) -> Put content into sk_buff & send it
+
+     - Then it pass through Network Protocol Block, we'll talk about it later.
+     - After that packets land up in device agnostic layer, which links
+       various hardware devices (e.g. Ethernet, WiFi) to different network
+       protocols.
+     - The interfacing is via struct net_device_ops, which has a long list of
+       net_device operations. Particularly for transmit:
+       netdev_tx_t(*ndo_start_xmit) (struct sk_buff *skb,
+                                     struct net_device *dev);
+     - To send the packet, the skb is passed to a function called
+       dev_queue_xmit.
+     - it eventually invokes ops->ndo_start_xmit(skb, dev). This is exactly
+       the API handler that Ethernet device drivers need to register. But in
+       case of WIFI it's mac80211 that registers itself with netdev_ops.
+     - So mac80211 appears as netdev_ops invokes transmit handler
+	   ieee80211_subif_start_xmit to transmit a packet.
+     - ieee80211_subif_start_xmit (tx.c)
+         -- Adds the 802.11 header.
+         -- Initializes transmission time in dev->trans_start
+     - ieee80211_xmit (tx.c)
+         -- Makes headroom for encryption
+     - ieee80211_set_qos_header (wme.c)
+         -- Sets TID in Wi-Fi header according to skb->priority.
+     - ieee80211_tx (tx.c)
+         -- Obtains the proper transmission queue.
+         -- Prepares transmission
+         -- If the packet can not be transmitted, it is
+		    queued->timestamp queue entry.
+         -- Queues are maintained per sub-interface, in the structure qdata[4]
+            in ieee80211_sub_if_data.
+         -- Calls drv_tx() to pass the frame to the actual driver for
+            transmission
+     - drv_tx (driver-ops.h) [in Mac0211]
+         -- This is the entry point to the actual driver!
+         -- It is called for each packet to be transmitted.
+         -- Receives struct ieee80211_local
+         -- Receives the sk_buff (the data)
+     - drv_tx() [in mac80211]
+         -- The ath9k driver registers the functions to interface with
+            mac80211 in struct ieee80211_ops ath9k_ops. The input of this
+            struct is then loaded in mac80211 using the function
+            ieee80211_alloc_hw() in main.c of mac80211.
+         -- The function interfacing with drv_tx() is ath9k_tx().
+         -- The common data also contains other info like the number of
+            hw queues.
+     - ath9k_tx() (main.c)
+        -- Loads details of the hardware in struct ath_softc.
+        -- Updates the PM bit (not set by mac80211).
+        -- Wakes up hardware if it was sleeping.
+        -- Uses data struct ath_tx_control to track the status of the
+           transmission.
+        -- Starts transmission in ath_tx_start()
+     - ath_tx_start() (xmit.c)
+        -- Receives a pointer to an struct ath_tx_control containing a pointer
+           to the queue that contains the frame?
+        -- If the destination is HT capable tries aggregation.
+     - ath_tx_send_ampdu() (xmit.c)
+        -- if the destination is HT capable tries aggregation.
+     - ath_tx_send_normal() (xmit.c)
+        -- if the destination is not support HT mode.
+     - ath_tx_txqaddbuf() (xmit.c)
+        -- Receives as parameter a txq, then inserts the frame into the
+           outbound list, and sends it out to the hardware. The hardware
+           physical queues seem to support only 8 frames!
+        -- If the packet can not be inserted in the physical queue then it is
+           held here.
+     - ath9k_hw_txstart() (mac.c)
+        -- Writes the proper register in the hardware to trigger the
+           transmission in a given queue.
+        -- The hardware is the one performing the CSMA-CA according to the
+           configured parameters on that queue.
+
+     RX Path:
+     --------
+     - When receiving a packet, and also for other reasons, the hardware sends
+       an interruption that ath9k has previously registered. The function in
+       charge of handling the interruption seems to be irqreturn_t ath_isr in
+       main.c. This function discovers the type of interruption and asks the
+       kernel to schedule the execution of a tasklet, ath9k_tasklet in main.c.
+       This function in turn calls the the receive tasklet ath_rx_tasklet().
+     - ath_rx_tasklet (recv.c)
+        -- Obtains the frame header.
+        -- Obtains the current tsf(Time Synchronization Function) value.
+        -- Records info about received packet in struct ieee80211_rx_status.
+           --- u64 mactime: value in microseconds of the 64-bit Time
+               Synchronization Function (TSF) timer when the first data
+               symbol (MPDU) arrived at the hardware.
+           --- enum ieee80211_band band;
+           --- int rate_idx;
+           --- unsigned int rx_flags;
+        -- Insert received data in the receive buffer.
+        -- Creates a new skb to contain the received data.
+           --- ath9k_rx_skb_preprocess (recv.c)
+               ---- Checks if the received data has CRC errors and in that
+                    case drops it. However, crypto errors are still passed up
+                    to mac80211.
+               ---- Populates ath_rx_status.
+           --- ath9k_rx_skb_postprocess (recv.c)
+               ---- Remove padding from the received header.
+        -- Passes the skb to ieee80211_rx().
+
+     - ieee80211_rx() (mac80211 rx.c)
+        -- This is the entry point to mac80211.
+        -- Removes the radiotap header.
+           --- ieee80211_parse_qos() (x.c)
+               ---- Parses QoS from header.
+        -- Decides if this packet is addressed to this interface or to
+           another STA in the BSS.
+        -- Calls ieee80211_prepare_and_rx_handle()
+     - ieee80211_prepare_and_rx_handle()
+        -- Receives as input an ieee80211_rx_data.
+        -- Calls the rx handlers.
+     - ieee80211_rx_handlers(rx.c)
+        -- Among other calls the following functions:
+        -- ieee80211_rx_h_decrypt
+        -- ieee80211_rx_h_check_more_data
+        -- ieee80211_rx_h_sta_process
+        -- ieee80211_rx_h_data
+        -- ieee80211_rx_h_ctrl
+        ...
+        -- This is also where the data path and management path are divided.
+           If the received frame is of type data, it is translated into 802.3
+           frame (by __ieee80211_data_to8023) and is delivered to the
+           networking stack via netif_receive_skb. From then on, the network
+           protocol block will parse and decode the protocol header.
+           If the received frame is of type management, it is processed in
+           ieee80211_sta_rx_queued_mgmt. Some management frames end in
+           mac80211, and some are further passed up to cfg80211 and sent to
+           user space management tools. For example authentication frames are
+           further processed by cfg80211_rx_mlme_mgmt and sent to user space
+           via nl80211_send_rx_auth, and association response frames are
+           processed by cfg80211_rx_assoc_resp and sent to user space via
+           nl80211_send_rx_assoc.
+
+
+     Management Path: Corresponds to ieee80211 management frames
+     There is not much difference between communication path for Data &
+     Management frames.
+     For Management frames, we got some user space tools e.g.: wpa_supplicant,
+     hostapd etc.
+     Wpa_supplicant controls the wireless connection for client STAs such as
+     scan, authentication, and association. and hostapd functions as AP
+     These tools use netlink socket to communicate with kernel.
+     All handlers related to netlink socket are defined in nl80211 & cfg80211.
+     The user space tool invokes the send handlers in netlink library to send
+     the command.
+     In kernel space, the command is received by nl80211, which has the
+     mapping between command (.cmd) and action (.doit) in static
+     struct genl_ops nl80211_ops.
+     For the example of triggering scan, the scan request is passed from
+     cfg80211 to mac80211 via the scan handler that mac80211 has registered
+     with cfg80211 in struct cfg80211_ops:
+
+     const struct cfg80211_ops mac80211_config_ops = {
+                                                      .scan = ieee80211_scan,
+     };
+
+     In mac80211, ieee80211_scan will take over the scanning process:
+     -- ieee80211_scan_state_send_probe
+     -- ieee80211_send_probe_req
+     -- ieee80211_tx_skb_tid_band
+     -- ieee80211_xmit
+     -- ieee80211_tx
+     -- ieee80211_tx_frags
+     -- drv_tx
+
+
+
+
+
+
+
+
 
