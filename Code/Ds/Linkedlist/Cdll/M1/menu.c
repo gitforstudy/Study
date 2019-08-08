@@ -1,3 +1,9 @@
+/*
+ * Prog   : Circuler linked list
+ * Author : Prabhat Tamrakar (mail2prbt@gmail.com)
+ *
+ */
+
 #include "header.h"
 
 void menu(struct Node *head)
