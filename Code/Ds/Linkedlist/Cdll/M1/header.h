@@ -1,3 +1,9 @@
+/*
+ * Prog   : Circuler linked list
+ * Author : Prabhat Tamrakar (mail2prbt@gmail.com)
+ *
+ */
+
 #ifndef  __HEADER__
 #define __HEADER__
 

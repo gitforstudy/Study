@@ -1,3 +1,9 @@
+/*
+ * Prog   : Circuler linked list
+            Utility APIs
+ * Author : Prabhat Tamrakar (mail2prbt@gmail.com)
+ *
+ */
 #include "header.h"
 
 static int cnt = 1;

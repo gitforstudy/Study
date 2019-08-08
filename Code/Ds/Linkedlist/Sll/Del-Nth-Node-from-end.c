@@ -1,4 +1,8 @@
-/* Prog: Delete nth node from end */
+/*
+ * Prog   : Delete nth node from end
+ * Author : Prabhat Tamrakar (mail2prbt@gmail.com)
+ *
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
