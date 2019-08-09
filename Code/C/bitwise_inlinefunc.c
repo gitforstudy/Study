@@ -23,7 +23,9 @@
 
 /* Find the number is power of two or not */
 
-# define    P_TWO(num)        (num) ? (num & (~(-num))) ? 0 : 1 : 0
+//# define    P_TWO(num)        (num) ? (num & (~(-num))) ? 0 : 1 : 0
+//or
+# define    P_TWO(num)        (num & (num - 1)) ? 0 : 1
 
 /* Find the given number is multiply by 2,4,8 or not */
 
@@ -102,8 +104,12 @@
 # define    R_LEFT(num,n)         num = ((num << n) | (num >> 32-n))
 
 /* Swap the two integer number's using bitwise */
-
-# define    SWAP_NUM(a,b)        a = a ^ b; b = a ^ b;  a = a ^ b;
+//1
+# define    SWAP_NUM_M1(a,b)        a = a ^ b; b = a ^ b;  a = a ^ b;
+//2
+# define    SWAP_NUM_M2(a,b)        b = ((a * b)/a = b)
+//3
+# define    SWAP_NUM_M3(a,b)        a = a + b; b = a - b; a = a - b;
 
 /* Swap the adjacent bit's in the given number */
 
@@ -142,8 +148,15 @@ static inline int trailing(unsigned int num)
 static inline int count_set(unsigned int num)
 {
     int count = 0;
-    for(; num ;count += num & 1, num >>= 1) ;
-    return count;
+	//M1: Complixity O(n)
+    //for(; num ;count += num & 1, num >>= 1) ;
+	//M2: Complixity
+	if (num) {
+		count = 1;
+		while (num = num & (num - 1)) count++;
+	}
+
+	return count;
 }
 
 /* print the next largest number containing same number of 1's and 0's  */
@@ -179,7 +192,17 @@ void show(int num)
 
 void main(void)
 {
+	int num;
 
+	printf("Enter no: ");
+	scanf("%d", &num);
+
+	printf("Num of set bits in %d is %d\n", num, count_set(num));
+	if (P_TWO(num)) {
+		printf("%d is power of 2\n", num);
+	} else {
+		printf("%d is not power of 2\n", num);
+	}
 }
 
 
