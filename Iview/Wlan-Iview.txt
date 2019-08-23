@@ -8,16 +8,18 @@ Wlan:
 - Connection procedure and frame exchange
 - 4 way handshake
 - Data and management path
+- CSMA/CA and CSMA/CD
+- MAC Access Modes and Timing
+- QoS 11e/11n
+- BlockAck
 - powersaving mechanism
 - frame format beacon, probe request/response, auth_seq1/auth_seq2 &
   association request/response
 - Difference in IEEE80211 standards a, b, g, n, ac, ax, ah
-- CSMA/CA and CSMA/CD
 - What is short gaurd interval
 - What is dcf, pcf concept
 - What is difs, sifs and aifs
 - How QoS packets are queu and transmitted
-- What is BlockAck
 - Difference between AMSDU and AMPDU
 
 
@@ -287,8 +289,8 @@ Ans: Wi-Fi networks operate in areas of RF spectrum that require no licence
      Band	      DFS	          Channel	  Frequency (MHz)
      ------------------------------------------------------
      U-NII-1		              36 – 48	  5170 – 5250
-     U-NII-2A	  DFS required	      52 – 64	  5250 – 5330
-     U-NII-2C	  DFS required        100 – 140	  5490 – 5710
+     U-NII-2A	  DFS required	  52 – 64	  5250 – 5330
+     U-NII-2C	  DFS required    100 – 140	  5490 – 5710
      U-NII-3		              149 – 165	  5735 – 5835
 
 
@@ -505,7 +507,7 @@ Ans: The 4-way handshake is the process of exchanging 4 messages between an
 Derive PTK  |<------------------------------------------------------|
             |                                                       |
             | Message2: EAPOL-key (Snonce, RSNE, MIC)               |
-            |------------------------------------------------------>|Derive 
+            |------------------------------------------------------>|Derive
             |                                                       |PTK and
             |               Message3: EAPOL-key (Install PTK, RSNE, |GTK
             |                                    MIC, Encryted GTK) |
@@ -525,7 +527,7 @@ and GTK     |                                                       |
          can be used to encrypt unicast traffic.
        - M2: The supplicant sends an EAPOL-Key frame containing an SNonce to
          the authenticator. The authenticator now has all the necessary inputs
-         for the pseudorandom function. The supplicant also sends its RSN 
+         for the pseudorandom function. The supplicant also sends its RSN
          information element capabilities to the authenticator and a message
          integrity code (MIC). The authenticator derives a PTK from the PMK,
          ANonce, SNonce, and MAC addresses. The authenticator also validates
@@ -714,6 +716,50 @@ Ans: Data Path: Corresponds to ieee80211 data frames
      -- ieee80211_tx
      -- ieee80211_tx_frags
      -- drv_tx
+
+8.   CSMA/CA and CSMA/CD
+Ans: The basic principles of CSMA/CA are:
+     Carrier Sense to detect incoming transmissions
+     Clear Channel Assessment (CCA) and Network Allocation Vector (NAV) to
+     determine if the medium is idle and it is acceptable for the station to
+     transmit a frame Positive acknowledgement of frames to pro-actively avoid
+     collisions since wireless receivers cannot passively determine if a
+     collision has occurred as the RF energy is dispersed. This is in contrast
+     to wired Ethernet’s use of CSMA/CD and collision detection where the
+     receiver is able to detect collisions since the energy is reflected
+     through the wire back to the transmitter.
+
+9.   MAC Access Modes and Timing
+Ans: Access to the wireless medium is controlled by coordination functions.
+     Ethernet-like CSMA/CA access is provided by the distributed coordination
+     function (DCF). If contention-free service is required, it can be provided
+     by the point coordination function (PCF), which is built on top of the
+     DCF. Contention-free services are provided only in infrastructure
+     networks, but quality of service may be provided in any network that has
+     HCF support in the stations.
+     The coordination functions are described in the following list:
+       DCF: The DCF is the basis of the standard CSMA/CA access mechanism.
+            Like Ethernet, it first checks to see that the radio link is clear
+            before transmitting. To avoid collisions, stations use a
+            random backoff after each frame, with the first transmitter
+            seizing the channel. In some circumstances, the DCF may use the
+            CTS/RTS clearing technique to further reduce the possibility of
+            collisions.
+       PCF: Point coordination provides contention-free services. Special
+            stations called point coordinators are used to ensure that the
+            medium is provided without contention. Point coordinators reside
+            in access points, so the PCF is restricted to infrastructure
+            networks. To gain priority over standard contention-based services,
+            the PCF allows stations to transmit frames after a shorter
+            interval.
+       HCF: Some applications need to have service quality that is a step
+            above best-effort delivery, but the rigorous timing of the PCF is
+            not required. The HCF allows stations to maintain multiple service
+            queues and balance access to the wireless medium in favor of
+            applications that require better service quality. The HCF is not
+            fully standardized yet, but is being produced as part of the
+            eventual 802.11e specification.
+
 
 
 
