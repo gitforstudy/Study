@@ -1,0 +1,33 @@
+/*
+ * List of C coding questions.
+ *
+ */
+
+1. Add 4 integer values using only 1 variable.
+2. Find unique from the given array. 1, 1, 2, 3, 3, 4, 4.
+3. Find unique from the given array. 3, 3, 3, 1, 2, 2, 6, 6, 6, 6.
+4. Find whether an array is subset of another array.
+5. Check if a given array contains duplicate elements within k distance from
+   each other.
+6. Find missing elements of a range.
+   Ex. Input
+   	   	Array  : 10, 12, 11, 15
+       	range  : 10 to 15
+	   output : 13, 14
+7. Finding all possible combinations of numbers to reach a given sum.
+   Ex: Input
+	   	Array  : 1, 4, 3, 8, 7, 2
+       	sum    : 7
+	   Output
+		1 + 4 + 2 = 7
+		4 + 3     = 7
+8. Find the all possible ways to reach distination.
+
+   s________
+   |__|__|__|
+   |__|__|__|
+   |__|__|__|Destination
+
+   Output : 6 ways
+9.
+
