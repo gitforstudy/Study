@@ -57,6 +57,7 @@ void * mymalloc(int size)
 		//printf("Iteration: %d\n", cnt++);
 		if (loop->next) {
 			offset = loop->next->saddr - loop->saddr;
+			printf("offset = %d\n", offset);
 			if (offset != loop->size) {
 				if (size <= offset) {
 					break;
@@ -109,24 +110,29 @@ int main(int argc, char *argv[])
 	init_malloc();
 	//printf("Allocating 10 bytes\n");
 	p = (char *) mymalloc(10);
-	//printf("p = %d\n", p);
-	//printf("\nAllocating 5 x 4 = 20 bytes\n");
+	printf("p = %d\n", p);
+	printf("\nAllocating 5 x 4 = 20 bytes\n");
 	i = (int *) mymalloc(sizeof(int) * 5);
-	//printf("i = %d\n", i);
-	//printf("Allocating 8 bytes\n");
+	printf("i = %d\n", i);
+	printf("\nAllocating 8 bytes\n");
 	q = (char *) mymalloc(8);
-	//printf("p = %d\n", q);
-	//printf("\nFree i, 20 bytes\n");
+	printf("q = %d\n", q);
+	printf("\nFree i, 20 bytes\n");
 	myfree(i);
-	//printf("\nAllocating 3 x 4 = 15 bytes\n");
+	printf("\nAllocating 3 x 4 = 15 bytes\n");
 	i = (int *) mymalloc(sizeof(int) * 3);
-	//printf("i = %d\n", i);
-	//printf("\nAllocating 30 bytes\n");
+	printf("i = %d\n", i);
+	printf("\nAllocating 30 bytes\n");
 	s = (char *) mymalloc(30);
-	//printf("s = %d\n", s);
-	//printf("\nAllocating 5 bytes\n");
+	printf("s = %d\n", s);
+	printf("\nAllocating 5 bytes\n");
 	t = (char *) mymalloc(5);
-	//printf("t = %d\n", t);
+	printf("t = %d\n", t);
+	printf("\nFree p, 10 bytes\n");
+	myfree(p);
+	printf("\nAllocating 6 bytes\n");
+	p = (char *) mymalloc(6);
+	printf("p = %d\n", p);
 
 	return 0;
 }
