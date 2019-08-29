@@ -1,0 +1,60 @@
+Linux:
+======
+- Difference between user-space and kernel-space mutex and semaphore ?
+- Difference between user-space and kernel-space thread ?
+- Difference between Multiprogramming, multitasking/multiprocessing and
+  multithreading ?
+- Difference between mutex, semaphore and spin
+- Difference between process and thread
+- Difference between scheduler and dispatcher
+- How Scheduling works ?
+- How context switch happened in Linux?
+- How kernel can interact with user ?
+- How system call works?
+- IPC mechanism
+    fifo
+    pipe
+    message queues
+    shared memcpy
+    socket
+- what is unix domain socket, how to use ?
+- Process management
+    Process
+    Thread
+- Memory management
+    Virtual memcpy
+    Paging
+    Page fault
+    Thrashing
+- If you sleep in interrupt context, what will happen ?
+- How Dispatcher works.
+- How Dispatcher works in case of interrupt handling.
+- Spinlock vs Semaphore vs Mutex
+- Softirq vs tasklet vs workqueue
+
+
+NetApp Linux Device Driver Questions:
+=====================================
+- Why tophalf and bottom half
+- How drivers get initialize
+- Where you will make change to write a new driver.
+- How interrupt works
+- IPC and Synchronization mechanism
+- Difference between thread and process
+- Difference between kmalloc and vmalloc
+- Difference between mutex, semaphore and spinlock
+- How malloc works and how can you implement
+- root file system
+- sudo file system
+- run level
+- volatile, static, dynamic library (difference and creation)
+- How can process can execute both if and else condition.
+- Difference between fork, vfork, execv
+- Difference between modeprobe and insmod.
+- How insmod will work, internally what will happen
+- Where precompiled module (.ko) file will be present.
+- How system detects harware, how it will recognize the which type of device
+  plugged in
+- From where will you start writting new driver
+
+
