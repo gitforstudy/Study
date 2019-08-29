@@ -760,7 +760,24 @@ Ans: Access to the wireless medium is controlled by coordination functions.
             fully standardized yet, but is being produced as part of the
             eventual 802.11e specification.
 
+/* Need to complete */
 
+
+
+
+10.  How QoS packets are queud and transmitted
+Ans: Quality of Service (QoS) is a suite of technologies used to manage
+     bandwidth usage as data crosses computer networks. Its most common use is
+     fo protection of real-time and high priority data applications. QoS
+     technologies, or tools, each have specific rolls used in conjunction with
+     one another to build end-to-end network QoS policies.
+     Two most common QoS tools used to handle traffic are classification and
+     queuing. Classification identifies and marks traffic to ensure network
+     devices know how to identify and prioritize data as it traverses a
+     network. Queues are buffers in devices that hold data to be processed.
+     Queues provide bandwidth reservation and prioritization of traffic as it
+     enters or leaves a network device. If the queues are not emptied, they
+     overflow and drop traffic.
 
 
 
