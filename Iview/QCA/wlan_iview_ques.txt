@@ -1,0 +1,47 @@
+Qualcomm Hyd wlan questions:
+============================
+
+Linux:
+------
+1.  what is tophalf and bottom half
+2.  what will happen if you put sleep in interrupt handler ?
+3.  Extension: context switch, process/interrupt context, gpio to interrupt handler
+4.  What is MMU
+5.  diff b/w virtual address and physical address
+6.  what is use of virtual address 
+7.  disadvantage in virtual address
+8.  page tables
+9.  page fault
+10. page swap
+11. page thrashing
+12. what is the use of paging ?
+13. stages of compilation?
+14. what is scheduler, who will send segmentation fault signal 
+15. system calls
+
+C lang:
+-------
+1. own strcpy 
+2. reverse a single linked list
+3. delete duplicate elements in an array with O(n)
+
+Wi-Fi:
+------
+1.  802.11a,b,g,n differences
+2.  CSMA/CA dcf procedure
+3.  diff b/w SIFS, DIFS (questions on use IFS)
+4.  802.11n aggregation
+5.  advantages and disadvantages of AMSDU and AMPDU
+6.  802.11e standard
+7.  Qos category scenarios like below
+8.  if you have 4 bk, 4 be, 4voice packets how queues will forward ? what is HCF and EDCMA ?
+9.  802.11h explanation
+10. 802.11i explanations
+11. wpa2 handshake
+12. Parts of ptk
+13. use of mic
+14. how to know whether management frame is protected or not ?
+15. What frames really need management frame protection ?
+16. 802.11 linux stack architecture
+17. netlink sockets
+19. what is wext how we can use ?
