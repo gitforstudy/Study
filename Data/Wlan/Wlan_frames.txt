@@ -1,0 +1,40 @@
+Management Frames                       wlan.fc.type==0
+Control Frames                          wlan.fc.type==1
+Data Frames                             wlan.fc.type==2
+
+Association Request                     wlan.fc.type_subtype==0
+Association Response                    wlan.fc.type_subtype==1
+Reassociation Request                   wlan.fc.type_subtype==2
+Reassociation Response                  wlan.fc.type_subtype==3
+Probe Request                           wlan.fc.type_subtype==4
+Probe Response                          wlan.fc.type_subtype==5
+Beacon                                  wlan.fc.type_subtype==8
+ATIM                                    wlan.fc.type_subtype==9
+Disassociation                          wlan.fc.type_subtype==10
+Authentication                          wlan.fc.type_subtype==11
+Deauthentication                        wlan.fc.type_subtype==12
+Action Frames                           wlan.fc.type_subtype==13
+Block ACK Request                       wlan.fc.type_subtype==24
+Block ACK                               wlan.fc.type_subtype==25
+Power Save Poll                         wlan.fc.type_subtype==26
+Request to Send                         wlan.fc.type_subtype==27
+Clear to Send                           wlan.fc.type_subtype==28
+ACK                                     wlan.fc.type_subtype==29
+CFP End                                 wlan.fc.type_subtype==30
+CFP End ACK                             wlan.fc.type_subtype==31
+Data + CF ACK                           wlan.fc.type_subtype==33
+Data + CF Poll                          wlan.fc.type_subtype==34
+Data + CF ACK + CF Poll                 wlan.fc.type_subtype==35
+Null Data                               wlan.fc.type_subtype==36
+Null Data + CF ACK                      wlan.fc.type_subtype==37
+Null Data + CF Poll                     wlan.fc.type_subtype==38
+Null Data + CF ACK + CF Poll            wlan.fc.type_subtype==39
+QoS Data                                wlan.fc.type_subtype==40
+QoS Data + CF ACK                       wlan.fc.type_subtype==41
+QoS Data + CF Poll                      wlan.fc.type_subtype==42
+QoS Data + CF ACK + CF Poll             wlan.fc.type_subtype==43
+Null QoS Data                           wlan.fc.type_subtype==44
+Null QoS Data + CF Poll                 wlan.fc.type_subtype==46
+Null QoS Data + CF ACK + CF Poll        wlan.fc.type_subtype==47
+
+

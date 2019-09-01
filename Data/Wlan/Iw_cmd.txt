@@ -1,0 +1,58 @@
+>	 What is iw command?
+Ans: iw - show/manipulate wireless devices and their configuration. iw is a new
+     nl80211 based CLI configuration utility for wireless devices. It supports
+     all new drivers that have been added to the kernel recently. The old tool
+     iwconfig, which uses Wireless Extensions interface, is deprecated and it's
+     strongly recommended to switch to iw and nl80211. Some of iw commands
+
+	    1)  iw list			//Getting device capabilities
+	    2)  iw dev wlan0 scan		//Scanning
+	    3)  iw event			//Listening to events
+	    4)  iw event -f			//When debugging, it can be useful to see the
+	                              auth/assoc/deauth/disassoc frames
+	    5)  iw event -t			//timing information
+	    6)  iw dev wlan0 link	//Getting link status -> To determine if you
+	                              are connected to an AP or not and if you are
+	                              the last TX rate used you can use the command
+	                              below.
+		7)  iw wlan0 connect foo		//Establishing a basic connection
+		8)  iw wlan0 connect foo 2432   //Suppose you have two APs with the
+		                                  SSID foo, and you know the one you
+		                                  want to connect to is on the frequency
+                    					  2432, you can specify the frequency.
+	    9)  iw wlan0 connect foo keys 0:abcde d:1:0011223344    //To connect to
+	                                                        an AP that uses WEP
+	    10) iw dev wlan1 station dump	//To get station statistic information
+	                     such as the amount of tx/rx bytes, the last TX bitrate 
+					     (including MCS rate) 
+	    11) sudo iw dev wlan1 station get <peer-MAC-address>	
+	            //If you want to get specific statistics against a peer you station is 
+				  communicating with
+	    12) iw wlan0 set bitrates legacy-2.4 12 18 24	
+	                                            //Modifying tx legacy bitrates
+	    13) iw dev wlan0 set bitrates mcs-5 4	//Modifying tx HT MCS bitrates
+	    14)iw dev wlan0 set bitrates mcs-2.4	
+	                  //To clear all tx bitrates and set things back to normal:
+	    15) iw dev <devname> set txpower <auto|fixed|limit> [<tx power in mBm>]	
+	                                                //Setting TX power
+	    16) sudo iw dev wlan0 set power_save on		//Power save
+	    17) iw dev wlan0 get power_save	    
+	                                //To query the current power save settings 
+	    18) iw phy phy0 interface add moni0 type monitor
+	                                //For example to add a monitor interface:
+	    19) iw phy phy0 interface add wlan10 type managed
+	           //to list all interfaces. To create a new managed mode interface
+	    20) iw dev wlan0 interface add fish0 type monitor flags none
+	        //Modifying monitor interface flags
+		    >>	The following are flags you can specify as monitor interface flags
+			    none
+				fcsfail
+				plcpfail
+				control
+				otherbss
+				cook
+				active
+    	21) tcpdump -i fish0 -s 65000 -p -U -w  /tmp/fishing.dump	
+    	            //You can then request the user to use tcpdump on a session
+	    21) iw dev moni0 del				//Deleting interfaces with iw
+	    22) sudo iwconfig wlp6s0 mode monitor		

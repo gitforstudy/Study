@@ -1,0 +1,17 @@
+ath9k_init
+  ath_pci_init
+    .name       = "ath9k",
+    .id_table   = ath_pci_id_table,
+    .probe      = ath_pci_probe,
+    .remove     = ath_pci_remove,
+    .driver.pm  = ATH9K_PM_OPS,
+
+    ath_pci_probe
+
+  ath_ahb_init
+  dmi_check_system
+
+ath9k_exit
+  ath_ahb_exit
+  ath_pci_exit
+
