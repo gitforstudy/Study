@@ -1,0 +1,274 @@
+Ath9k Tx Data Path:
+-------------------
+
+
+ieee80211_subif_start_xmit
+|
+|-->__ieee80211_subif_start_xmit
+    |
+    |-->ieee80211_build_hdr
+    |
+    |-->ieee80211_tx_stats
+    |
+    |-->ieee80211_xmit
+        |
+        |-->ieee80211_set_qos_hdr
+        |
+        |-->ieee80211_tx
+            |
+            |-->ieee80211_tx_prepare
+            |
+            |-->invoke_tx_handlers_early
+            |
+            |-->__ieee80211_tx
+                |
+                |-->ieee80211_tx_frags
+                    |
+                    |-->drv_tx
+
+
+QoS Data packets:
+-----------------
+1st time:
+---------
+ieee80211_subif_start_xmit
+|
+|-->__ieee80211_subif_start_xmit
+    |
+    |-->ieee80211_build_hdr
+    |
+    |-->ieee80211_tx_stats
+    |
+    |-->ieee80211_xmit
+        |
+        |-->ieee80211_set_qos_hdr
+        |
+        |-->ieee80211_tx
+        |   |
+        |   |-->ieee80211_tx_prepare
+        |   |   |
+        |   |   |-->ieee80211_tx_prep_agg
+        |   |
+        |   |-->invoke_tx_handlers_early
+        |   |   |
+        |   |   |-->ieee80211_tx_h_dynamic_ps
+        |   |   |
+        |   |   |-->ieee80211_tx_h_check_assoc
+        |   |   |
+        |   |   |-->ieee80211_tx_h_ps_buf
+        |   |   |
+        |   |   |-->ieee80211_tx_h_check_control_port_protocol
+        |   |   |
+        |   |   |-->ieee80211_tx_h_select_key
+        |   |   |
+        |   |   |-->ieee80211_tx_h_rate_ctrl
+        |   |   |   |
+        |   |   |   |-->rate_control_get_rate
+        |   |   |   |   |
+        |   |   |   |   |-->ref->ops->get_rate  [ops: minstrel_ht_get_rate]
+        |   |   |   |       |
+        |   |   |   |       |-->minstrel_aggr_check [return from 'if (likely(sta->ampdu_mlme.tid_tx[tid]))']
+        |   |   |   |
+        |   |   |   |-->rate_control_get_rate   [return from 'if (ieee80211_hw_check(&sdata->local->hw, SUPPORTS_RC_TABLE))']
+        |   |   |
+        |   |   |-->ieee80211_tx_h_rate_ctrl   [return from 'if (ratetbl)']
+        |   |
+        |   |-->ieee80211_queue_skb
+        |   |   |
+        |   |   |-->ieee80211_txq_enqueue
+        |   |   |
+        |   |   |-->drv_wake_tx_queue
+        |   |   |   |
+        |   |   |   |-->local->ops->wake_tx_queue   [ops: ath9k_wake_tx_queue]
+        |   |   |   |   |
+        |   |   |   |   |-->ath_tx_queue_tid    [return from: 'if (!ctx || !list_empty(&tid->list))']
+        |   |   |   |
+        |   |   |   |-->ath_txq_schedule
+        |   |   |   |   |
+        |   |   |   |   |-->ath_tx_sched_aggr   [return from: 'if (!bf)']
+        |
+
+
+
+
+/* As of no idea from where this function get called */
+ieee80211_tx_ba_session_handle_start
+|
+|-->drv_ampdu_action    [just return as there is no Data]
+|
+|-->ieee80211_send_addba_request
+    |
+    |-->ieee80211_tx_skb
+        |
+        |-->ieee80211_tx_skb_tid
+            |
+            |-->__ieee80211_tx_skb_tid_band
+                |
+                |-->ieee80211_xmit
+
+
+
+
+
+
+
+
+Next time onwards:
+------------------
+ieee80211_subif_start_xmit
+|
+|-->__ieee80211_subif_start_xmit
+    |
+    |-->ieee80211_xmit_fast
+        |
+        |-->ieee80211_tx_h_rate_ctrl
+        |   |
+        |   |-->rate_control_get_rate
+        |       |
+        |       |-->ref->ops->get_rate  [ops: minstrel_ht_get_rate]
+        |           |
+        |           |-->minstrel_aggr_check
+        |               |
+        |               |-->ieee80211_start_tx_ba_session
+        |                   |
+        |                   |-->ieee80211_queue_work
+        |                       |
+        |                       |-->queue_work  [workqueue: ieee80211_ba_session_work]
+        |
+        |-->ieee80211_queue_skb
+            |
+            |-->ieee80211_txq_enqueue
+            |
+            |-->drv_wake_tx_queue
+                |
+                |-->local->ops->wake_tx_queue   [ops: ath9k_wake_tx_queue]
+                    |
+                    |-->ath_tx_queue_tid
+                    |
+                    |-->ath_txq_schedule
+                        |
+                        |-->ath_tx_sched_aggr
+
+Workqueue:
+---------
+ieee80211_ba_session_work
+|
+|-->ieee80211_tx_ba_session_handle_start
+    |
+    |-->drv_ampdu_action
+    |   |
+    |   |-->local->ops->ampdu_action    [ops: ath9k_ampdu_action]
+    |       |
+    |       |-->ath_tx_aggr_start   [if 'action == IEEE80211_AMPDU_TX_START']
+    |       |
+    |       |-->ieee80211_start_tx_ba_cb_irqsafe  [if (!ret)]
+    |       |
+    |       |-->ath_tx_aggr_stop    [if 'action == IEEE80211_AMPDU_TX_STOP_CONT']
+    |       |
+    |       |-->ieee80211_stop_tx_ba_cb_irqsafe     [if (!flush)]
+    |
+    |-->ieee80211_agg_splice_packets    [if (ret)]
+    |
+    |-->ieee80211_assign_tid_tx     [if (ret)]
+    |
+    |-->ieee80211_agg_splice_finish     [if (ret)]
+    |
+    |-->ieee80211_agg_start_txq
+    |   |
+    |   |-->drv_wake_tx_queue
+    |       |
+    |       |-->local->ops->wake_tx_queue   [ops: ath9k_wake_tx_queue]
+    |
+    |-->return from ieee80211_tx_ba_session_handle_start    [if (ret)]
+    |
+    |-->ieee80211_send_addba_request
+    |   |
+    |   |-->ieee80211_tx_skb
+    |       |
+    |       |-->ieee80211_tx_skb_tid
+    |           |
+    |           |-->__ieee80211_tx_skb_tid_band
+    |               |
+    |               |-->ieee80211_xmit
+    |                   |
+    |                   |-->ieee80211_set_qos_hdr
+    |                   |
+    |                   |-->ieee80211_tx
+    |
+    |-->
+    |
+    |
+    |
+    |
+    |
+    |
+
+
+
+
+
+
+tasklet_init(&sc->intr_tq, ath9k_tasklet, (unsigned long)sc);
+ath_isr: tasklet_schedule(&sc->intr_tq);
+
+
+ath9k_tasklet
+ath_tx_tasklet
+ath_tx_processq | ath_tx_edma_tasklet | ath_drain_txq_list
+ath_tx_process_buffer
+ath_tx_complete_aggr
+ath_send_bar
+
+
+
+
+
+drivers/net/wireless/ath/ath9k/init.c
+ieee80211_hw_set(hw, AMPDU_AGGREGATION);
+
+ath_tx_send_normal
+ath_tx_get_tid_subframe
+
+
+
+                      ieee80211_tx | invoke_tx_handlers
+ieee80211_xmit_fast | invoke_tx_handlers_early
+ieee80211_tx_h_rate_ctrl | __ieee80211_beacon_get
+rate_control_get_rate
+get_rate
+minstrel_ht_get_rate
+minstrel_aggr_check
+ieee80211_start_tx_ba_session | drv_ampdu_action
+ath9k_ampdu_action
+ath_tx_aggr_start
+
+Block Ack:
+
+ieee80211_send_addba_request
+ieee80211_send_bar
+
+
+printk("func: %s, line: %d\n", __func__, __LINE__);
+
+    struct ieee80211_hdr *hdr;
+    hdr = (struct ieee80211_hdr *) skb->data;
+    u8 *qc;
+
+    qc = ieee80211_get_qos_ctl(hdr);
+
+    printk("func: %s, line: %d, Tid: %x\n", __func__, __LINE__, qc[0] & IEEE80211_QOS_CTL_TID_MASK);
+    printk("func: %s, line: %d, AckPolicy: %x\n", __func__, __LINE__, qc[0] & IEEE80211_QOS_CTL_ACK_POLICY_MASK);
+
+
+
+   if ((hdr->frame_control & cpu_to_le16(IEEE80211_STYPE_QOS_DATA)))
+        printk("Data frame: func: %s, line: %d\n", __func__, __LINE__);
+
+if (ieee80211_is_data_qos(hdr->frame_control))
+    printk("QoSData frame: func: %s, line: %d\n", __func__, __LINE__);
+
+if (ieee80211_is_qos_nullfunc(hdr->frame_control))
+    printk("QoSNull frame: func: %s, line: %d\n", __func__, __LINE__);
+
+if (ieee80211_is_data_present(hdr->frame_control))
+    printk("Data frame: func: %s, line: %d\n", __func__, __LINE__);

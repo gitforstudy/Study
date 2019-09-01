@@ -1,0 +1,184 @@
+
+1.   When Wi-Fi was invent ?
+Ans: In 1991, NCR Corporation with AT&T Corporation invented the precursor to 802.11, intended for use in cashier systems, under the name WaveLAN.
+
+2.   What is significance of 802.11 ?
+Ans: The first number, 802, is simply the IEEE’s number for the Committee of the IEEE that has been developing technical standards for local-area
+     and metropolitan-area networks since February of 1980. (It is sometimes alleged that the number 802 comes from the date of first meeting of
+     this committee, but I suspect this of being wishful thinking rather than grounded in fact.) This Committee handles all technical standards
+     related to local and medium-distance networks.
+     The second number, 11, reflects that wireless local area networks are the eleventh broad area in which this Committee has ventured.
+
+3.   How many IEEE802.11 amendments ?
+Ans: IEEE 802.11-1997: The WLAN standard was originally 1 Mbit/s and 2 Mbit/s, 2.4 GHz RF and infrared (IR) standard (1997), all the others listed
+	                   below are Amendments to this standard, except for Recommended Practices 802.11F and 802.11T.
+     IEEE 802.11a: 54 Mbit/s, 5 GHz standard (1999, shipping products in 2001)
+     IEEE 802.11b: Enhancements to 802.11 to support 5.5 Mbit/s and 11 Mbit/s (1999)
+     IEEE 802.11c: Bridge operation procedures; included in the IEEE 802.1D standard (2001)
+     IEEE 802.11d: International (country-to-country) roaming extensions (2001)
+     IEEE 802.11e: Enhancements: QoS, including packet bursting (2005)
+     IEEE 802.11F: Inter-Access Point Protocol (2003) Withdrawn February 2006
+     IEEE 802.11g: 54 Mbit/s, 2.4 GHz standard (backwards compatible with b) (2003)
+     IEEE 802.11h: Spectrum Managed 802.11a (5 GHz) for European compatibility (2004)
+     IEEE 802.11i: Enhanced security (2004)
+     IEEE 802.11j: Extensions for Japan (2004)
+     IEEE 802.11-2007: A new release of the standard that includes amendments a, b, d, e, g, h, i, and j. (July 2007)
+     IEEE 802.11k: Radio resource measurement enhancements (2008)
+     IEEE 802.11n: Higher-throughput improvements using MIMO (multiple-input, multiple-output antennas) (September 2009)
+     IEEE 802.11p: WAVE—Wireless Access for the Vehicular Environment (such as ambulances and passenger cars) (July 2010)
+     IEEE 802.11r: Fast BSS transition (FT) (2008)
+     IEEE 802.11s: Mesh Networking, Extended Service Set (ESS) (July 2011)
+     IEEE 802.11T: Wireless Performance Prediction (WPP)—test methods and metrics Recommendation cancelled
+     IEEE 802.11u: Improvements related to HotSpots and 3rd-party authorization of clients, e.g., cellular network offload (February 2011)
+     IEEE 802.11v: Wireless network management (February 2011)
+     IEEE 802.11w: Protected Management Frames (September 2009)
+     IEEE 802.11y: 3650–3700 MHz Operation in the U.S. (2008)
+     IEEE 802.11z: Extensions to Direct Link Setup (DLS) (September 2010)
+     IEEE 802.11-2012: A new release of the standard that includes amendments k, n, p, r, s, u, v, w, y, and z (March 2012)
+     IEEE 802.11aa: Robust streaming of Audio Video Transport Streams (June 2012)
+     IEEE 802.11ac: Very High Throughput <6 GHz;[54] potential improvements over 802.11n: better modulation scheme (expected ~10% throughput
+                    increase), wider channels (estimate in future time 80 to 160 MHz), multi user MIMO;[55] (December 2013)
+     IEEE 802.11ad: Very High Throughput 60 GHz (December 2012) — see WiGig
+     IEEE 802.11ae: Prioritization of Management Frames (March 2012)
+     IEEE 802.11af: TV Whitespace (February 2014)
+     IEEE 802.11ai: Fast Initial Link Setup (December 2016)
+     IEEE 802.11-2016: A new release of the standard that includes amendments ae, aa, ad, ac, and af (December 2016)
+
+     In process :-
+	 ----------
+     IEEE 802.11ah: Sub-1 GHz license exempt operation (e.g., sensor network, smart metering) (~ March 2016)
+     IEEE 802.11aj: China Millimeter Wave (~ June 2016)
+     IEEE 802.11ak: General Links (~ May 2016)
+     IEEE 802.11aq: Pre-association Discovery (~ July 2016)
+     IEEE 802.11ax: High Efficiency WLAN (~ May 2018)
+     IEEE 802.11ay: Enhancements for Ultra High Throughput in and around the 60 GHz Band (~ TBD)
+     IEEE 802.11az: Next Generation Positioning (~ TBD)
+     IEEE 802.11ba: Wake Up Radio (~ TBD)
+     802.11F and 802.11T are recommended practices rather than standards, and are capitalized as such.
+
+Note: 802.11m is used for standard maintenance. 802.11ma was completed for 802.11-2007, 802.11mb for 802.11-2012, and 802.11mc for 802.11-2016.
+
+4.   What is the difference between 2.4 GHz and 5GHz?
+Ans: 2.4 GHz and 5 GHz are simply different frequencies, and each has its advantages and disadvantages. The primary differences between the2.4GHz
+	 and 5GHz wireless frequencies are range and bandwidth. 5GHz provides faster data rates at a shorter distance, whereas 2.4GHz offers coverage
+	 for farther distances, but may perform at slower speeds. This article describes the differences between 2.4 GHz and 5GHz frequencies, and
+	 offers suggestions for choosing the frequency that is best for your situation.
+
+	 Range (how far your data can travel):
+	 -------------------------------------
+	 In most cases, the higher the frequency of a wireless signal, the shorter its range, or how far your data can travel, will be. The biggest
+	 reason for this is that higher frequency signals cannot penetrate solid objects like walls and floors as well as lower frequency signals.
+	 Thus, the 2.4 GHz has a farther range than the 5 GHz frequency.
+
+	 Bandwidth (speed):
+     ------------------
+	 Higher frequencies allow faster transmission of data, also known as bandwidth. Higher bandwidth means that files will download and upload
+	 faster, and high-bandwidth applications such as streaming video will perform much smoother and faster. Therefore,the 5GHz with its higher
+	 bandwidth will provide much faster data connections than 2.4 GHz.
+
+	 Interference:
+     -------------
+	 Many devices only use the 2.4 GHz frequency, and these devices are all attempting to use the same “radio space” which can cause overcrowding
+	 of the channels. The 5GHz band has 23 available channels for devices to use vs. the 3 available on the 2.4 GHz band.
+
+	 So, which should you choose, 2.4 GHz or 5 GHz?
+	 	• If faster speeds are most important to you, 5GHz is usually a better choice than 2.4 GHz.
+	    • If wireless range is more important to you, 2.4 GHz is usually a better choice than 5 GHz.
+	 	• If you have a lot of devices that use 2.4 GHz and you are experiencing interference or intermittent connectivity issues, then 5GHz
+	   	  is probably a better option.
+
+5.   What do you understand by term Frequency, Bandwidth, wavelength.
+Ans: Frequency:  Frequency is the number of occurrences of a repeating event per unit time.
+	             In terms of signals, The frequency of a wave is the number of waves produced by a source each second. It is also the number of
+	             waves that pass a certain point each second. The unit of frequency is the hertz (Hz).
+
+	 Bandwidth:  Bandwidth is the difference between the upper and lower frequencies in a continuous set of frequencies. It is typically measured
+	             in hertz, and may sometimes refer to passband bandwidth, sometimes to baseband bandwidth, depending on context.
+
+	 wavelength: In form of electromagnetic radio waves or light waves make characteristic patterns as they travel through space. Each wave has a
+	             certain shape and length. The distance between peaks (high points) is called wavelength.
+	             or
+	             Wavelength is the distance between identical points in the adjacent cycles of a waveform signal propogated in space or along a
+	             wire.
+
+6.   Explain Diffrent types of wireless networks.
+Ans: Type                Range	                Applications	            Standards
+
+     Personal area       Within reach of        Cable replacement for       Bluetooth, ZigBee,
+	 network (PAN)       a person               peripherals                 NFC
+
+	 Local area          Within a building      Wireless extension of       IEEE 802.11 (WiFi)
+     network (LAN).      or campus.             wired network.
+
+     Metropolitan        Within a city          Wireless inter-network      IEEE 802.15 (WiMAX)
+     area network                               connectivity
+     (MAN).
+
+     Wide area           Worldwide              Wireless network access     Cellular (UMTS, LTE, etc.)
+     network (WAN)
+
+7.   Explain 802.11 Management Frames
+Ans: Management Frames
+	 802.11 management frames enable stations to establish and maintain communications. The following are common 802.11 management frame subtypes:
+
+	 Authentication frame: 802.11 authentication is a process whereby the access point either accepts or rejects the identity of a radio NIC. The
+	 NIC begins the process by sending an authentication frame containing its identity to the access point. With open system authentication (the
+	 default), the radio NIC sends only one authentication frame, and the access point responds with an authentication frame as a response
+	 indicating acceptance (or rejection). With the optional shared key authentication, the radio NIC sends an initial authentication frame, and
+	 the access point responds with an authentication frame containing challenge text. The radio NIC must send an encrypted version of the
+	 challenge text (using its WEP key) in an authentication frame back to the access point. The access point ensures that the radio NIC has the
+	 correct WEP key (which is the basis for authentication) by seeing whether the challenge text recovered after decryption is the same that was
+	 sent previously. Based on the results of this comparison, the access point replies to the radio NIC with an authentication frame signifying
+	 the result of authentication.
+
+	 Deauthentication frame: A station sends a deauthentication frame to another station if it wishes to terminate secure communications.
+
+	 Association request frame: 802.11 association enables the access point to allocate resources for and synchronize with a radio NIC. A NIC
+	 begins the association process by sending an association request to an access point. This frame carries information about the NIC (e.g.,
+	 supported data rates) and the SSID of the network it wishes to associate with. After receiving the association request, the access point
+	 considers associating with the NIC, and (if accepted) reserves memory space and establishes an association ID for the NIC.
+
+	 Association response frame: An access point sends an association response frame containing an acceptance or rejection notice to the radio NIC
+	 requesting association. If the access point accepts the radio NIC, the frame includes information regarding the association, such as
+	 association ID and supported data rates. If the outcome of the association is positive, the radio NIC can utilize the access point to
+	 communicate with other NICs on the network and systems on the distribution (i.e., Ethernet) side of the access point.
+
+	 Reassociation request frame: If a radio NIC roams away from the currently associated access point and finds another access point having a
+	 stronger beacon signal, the radio NIC will send a reassociation frame to the new access point. The new access point then coordinates the
+	 forwarding of data frames that may still be in the buffer of the previous access point waiting for transmission to the radio NIC.
+
+	 Reassociation response frame: An access point sends a reassociation response frame containing an acceptance or rejection notice to the radio
+	 NIC requesting reassociation. Similar to the association process, the frame includes information regarding the association, such as
+	 association ID and supported data rates.
+
+	 Disassociation frame: A station sends a disassociation frame to another station if it wishes to terminate the association. For example, a
+	 radio NIC that is shut down gracefully can send a disassociation frame to alert the access point that the NIC is powering off. The access
+	 point can then relinquish memory allocations and remove the radio NIC from the association table.
+
+	 Beacon frame: The access point periodically sends a beacon frame to announce its presence and relay information, such as timestamp, SSID, and
+	 other parameters regarding the access point to radio NICs that are within range. Radio NICs continually scan all 802.11 radio channels and
+	 listen to beacons as the basis for choosing which access point is best to associate with.
+
+	 Probe request frame: A station sends a probe request frame when it needs to obtain information from another station. For example, a radio NIC
+	 would send a probe request to determine which access points are within range.
+
+	 Probe response frame: A station will respond with a probe response frame, containing capability information, supported data rates, etc., when
+	 after it receives a probe request frame.
+	 Control Frames
+
+8.   Explain 802.11 Control Frames
+Ans: Control Frames
+
+
+
+
+
+
+
+
+
+
+
+
+
+
