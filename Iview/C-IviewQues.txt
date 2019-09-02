@@ -13,4 +13,49 @@ C:
    
 3. Implement malloc
 5. offsetof/container_of Macro
-6. 
+
+1. return next multiple of eight num
+	Ex: num 1 return 8	
+	    num 8 return 16
+
+/* ganesh */
+
+Ans: a = num >> 3;
+     return (a+1) << 3;
+
+
+2. find a pair of elements from an array whose sum equals a given number
+
+Ans: https://www.geeksforgeeks.org/given-an-array-a-and-a-number-x-check-for-pair-in-a-with-sum-as-x/
+
+
+3. count set bits and reset bits
+
+4. swap two bit positions in an integer
+
+5. i/p: 1->2->3->4->5
+   i/p: a->b->c->d->e
+
+	o/p: 1->a->2->b...->d->5->e
+
+Ans: https://www.geeksforgeeks.org/merge-a-linked-list-into-another-linked-list-at-alternate-positions/
+
+6. Implement two stacks in an array
+
+Ans: https://www.geeksforgeeks.org/implement-two-stacks-in-an-array/
+
+7. duplicate elements in an array
+
+Ans:	https://www.geeksforgeeks.org/duplicates-array-using-o1-extra-space-set-2/
+
+8. Reverse zigzag Traversal of a Binary Tree
+
+Ans: https://www.geeksforgeeks.org/reverse-zigzag-traversal-of-a-binary-tree/
+
+9. zigzag Traversal of a Binary Tree and level order
+
+10.i/p 1100110101
+
+	o/p: 1111110000
+
+11.
