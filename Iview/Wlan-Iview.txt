@@ -12,7 +12,7 @@ Wlan:
 - MAC Access Modes and Timing
 - QoS 11e/11n
 - BlockAck
-- powersaving mechanism
+- power saving mechanism
 - frame format beacon, probe request/response, auth_seq1/auth_seq2 &
   association request/response
 - Difference in IEEE80211 standards a, b, g, n, ac, ax, ah
@@ -97,6 +97,8 @@ In the passive scanning procedure, the station sweeps from channel to channel
 and records information from any Beacons it receives. Beacons are designed to
 allow a station to find out everything it needs to match parameters with the
 basic service set (BSS) and begin communications.
+Limitation with a passive scan is that if the client does not wait long enough
+on a channel, then the client may miss an AP beacon.
 
 Active Scan:
 ------------
@@ -149,6 +151,13 @@ timing intervals that can be configured as part of a scan.
   be necessary to adjust the maximum channel time so the responses from all
   the access points in the area can be processed.
 
+Active-scan scans for 30 milliseconds once every second, unless either of
+the following conditions is true:
+- High-priority traffic (voice or video) is present at 64 Kbps or higher.
+  In this case, active-scan scans for 30 milliseconds every 60 seconds.
+- Heavy data traffic is present at 4 Mbps or higher. In this case,
+  active-scan scans for 30 milliseconds every 5 seconds.
+
 Scan Report:
 ------------
 A scan report is generated at the conclusion of a scan. The report lists all
@@ -161,11 +170,11 @@ parameters also include:[*]
 Beacon interval (integer): Each BSS can transmit Beacon frames at its own
                            specific interval, measured in TUs.
 
-DTIM period (integer): DTIM frames are used as part of the powersaving
+DTIM period (integer): DTIM frames are used as part of the power saving
                        mechanism.
 
 Timing parameters: Two fields assist in synchronizing the station's timer to
-                   the timer used by a BSS. The Timestamp field indicates the
+                   the timer used by a BSS. The Time stamp field indicates the
                    value of the timer received by the scanning station; the
                    other field is an offset to enable a station to match timing
                    information to join a particular BSS.
@@ -180,6 +189,10 @@ BSSBasicRateSet: The basic rate set is the list of data rates that must be
 PHY parameters, CF parameters, and IBSS parameters: These three facets of the
 network have their own parameter sets. Channel information is included in the
 physical-layer parameters.
+
+Scan-path:
+----------
+/* Need to write scan path may be code flow like tx/rx path ? */
 
 FAQ's [Scanning procedure]:
 ---------------------------
@@ -206,8 +219,20 @@ Ans: Passive scan can not find the networks which is configured and enabled
      as hidden ssid but it can scan DFS channel. Active scanning can find
      the hidden network by direct probe request/response.
 
+d.   What Channels Are Scanned?
+Ans: RF scanning can be performed on a variety of different sets of channel
+     ranges or frequencies. The scan can be configured in the Radio profile
+	 to scan either operating channels, regulatory channels, or all channels.
+	 In a Radio profile, you can change the channels a radio actively scans.
+	 These are the three options for active scanning :
+     - Operating: Only the current channel is scanned and audited.
+     - Regulatory: Only regulatory channels are scanned and audited. If the
+	   radio is configured for 802.11b/g/n, the most commonly used channels,
+	   such as 1, 6, or 11, are scanned and audited more frequently.
+     - All: All channels are scanned and audited.
+
 2.   What is dfs, how it works? What is slave dfs and master dfs ?
-Ans: Wi-Fi networks operate in areas of RF spectrum that require no licence
+Ans: Wi-Fi networks operate in areas of RF spectrum that require no license
      to operate. One particular service that shares spectrum with wireless
      LANs is radar. Some types of radar installation operate in the 5GHz band
      that is used by Wi-Fi network. This means that they may use some of the
@@ -216,7 +241,7 @@ Ans: Wi-Fi networks operate in areas of RF spectrum that require no licence
      installations do not use 5GHz.
      However, due to the coexistence of both radar and Wi-Fi networks in the
      same area of spectrum, the Wi-Fi standard (IEEE 802.11, and dfs added
-     as WiFi regulatory specification amendmen 80211h) was designed to
+     as WiFi regulatory specification amendment 80211h) was designed to
      incorporate a spectrum sharing mechanism on 5GHz to ensure that Wi-Fi
      networks do not operate on frequencies (hence causing interference)
      that are used by nearby radar stations. This mechanism is known as
@@ -265,7 +290,7 @@ Ans: Wi-Fi networks operate in areas of RF spectrum that require no licence
      some solutions, APs that detect radar will move to channel 36
 	 exclusively. In other solutions, APs will choose to move to any of the
 	 available non-DFS channels. Some will jump to any available 5GHz channel
-	 they find (DFS or non-DFS). Behaviour in this area seems to be
+	 they find (DFS or non-DFS). Behavior in this area seems to be
 	 inconsistent and is not defined within the 802.11 standard.
 
      Non-Occupancy Period: Once radar has been detected on a channel, then
@@ -273,7 +298,7 @@ Ans: Wi-Fi networks operate in areas of RF spectrum that require no licence
      no further transmissions will be made by the AP on the affected channel.
      At the end of the 30-minute period, most APs will attempt to return to
      their original channel, subject to a channel availability check.
-     (Again behaviour in this area varies between vendors)
+     (Again behavior in this area varies between vendors)
 
      Are All 5GHz Channels Subject to DFS?
      No, not all channels in the 5GHz band are subject to DFS. The channels
@@ -293,6 +318,38 @@ Ans: Wi-Fi networks operate in areas of RF spectrum that require no licence
      U-NII-2C	  DFS required    100 – 140	  5490 – 5710
      U-NII-3		              149 – 165	  5735 – 5835
 
+FAQ's [DFS]:
+------------
+a.   What is Radar ?
+Ans: A conventional radar signal is a burst of pulses of a high frequency
+     signal. When one burst is over, it is repeated after some duration,
+	 called sweep time. ITU has defined several different types of radar based
+	 on different frequencies, the number of pulses in a burst, and pulse
+	 repetition frequency within the burst. The sweep time is a result of
+	 radars that slowly rotate through 360 degrees, so that in a 30-second
+	 sweep period, the AP may be hit by the radar signal only for fraction of
+	 a second. During this hit, the AP sees a few pulses separated by a time
+	 interval (called the period), which is anywhere from 250 microseconds to
+	 20 milliseconds. Each pulse can be 2 microseconds or smaller in width.
+
+b.   How Radar can be detected ?
+Ans: The AR5210 chip does not have any special mode to listen for and detect
+     radar signals. However, it indicates a PHY error when this type of
+	 interference hits the receiver while it is receiving the preamble and PLCP
+	 header of an 802.11a frame. It can result in indicating a zero length
+	 frame to the host if the interference activates the receiver. Any
+	 interference that hits the receiver during the payload of the frame causes
+	 a CRC error. On AR5210, zero length frame detection and promiscuous mode
+	 for receive filter are enabled in the hardware to indicate the PHY errors
+	 to the host. The AR5213/AR2313 chips generate a special type of PHY error
+	 code when a short width energy pulse is detected, typically generated by
+	 radar. On AR5213/AR2313, zero length frame detection and radar PHY error
+	 detection is enabled in the hardware to indicate the PHY errors to the
+	 host. By turning on only radar PHY errors, number of errors to be processed
+	 by the algorithm is lower and probability of false detects is reduced too.
+	 The hardware generates an interrupt to the host on every received frame
+	 with an error. The characteristics of these errors are classified and used
+	 in radar detection.
 
 3.   What is Channel switch announcement
 Ans: Once AP detects radar on operating channel, CSA element ID will be
@@ -778,11 +835,3 @@ Ans: Quality of Service (QoS) is a suite of technologies used to manage
      Queues provide bandwidth reservation and prioritization of traffic as it
      enters or leaves a network device. If the queues are not emptied, they
      overflow and drop traffic.
-
-
-
-
-
-
-
-
