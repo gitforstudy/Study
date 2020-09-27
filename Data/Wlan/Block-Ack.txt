@@ -1,33 +1,50 @@
 Block-Ack:
 ==========
 
-The Block Ack mechanism improves channel efficiency by aggregating several acknowledgments into one frame. There are two types of Block Ack mechanisms, immediate and delayed. Immediate Block Ack is suitable for high-bandwidth, low-latency traffic while the delayed Block Ack is suitable for applications that tolerate moderate latency.
+The BlockAck mechanism improves channel efficiency by aggregating several
+acknowledgments into one frame. There are two types of BlockAck mechanisms,
+immediate and delayed. Immediate BlockAck is suitable for high-bandwidth,
+low-latency traffic while the delayed BlockAck is suitable for applications
+that tolerate moderate latency.
 
-The Block Ack mechanism is initialized by an exchange of ADDBA Request/Response frames. After initialization, blocks of QoS data frames may be transmitted from the originator to the recipient. A block may be started within a polled TXOP or by winning EDCA contention. The MPDUs within the block of frames are acknowledged by a BlockAck frame, which is requested by a BlockAckReq frame.
+The BlockAck mechanism is initialized by an exchange of ADDBA Request/Response
+frames. After initialization, blocks of QoS data frames may be transmitted from
+the originator to the recipient. A block may be started within a polled TXOP or
+by winning EDCA contention. The MPDUs within the block of frames are acknowledged
+by a BlockAck frame, which is requested by a BlockAckReq frame.
 
 Setup
- - Tx STA (originator) first check whether the intended recipient STA is capable of participating in BlockAck mechanism by discovering and examining 
-   its Delayed Block Ack and Immediate Block Ack capability bits. If the intended recipient STA is capable of participating, the originator sends an 
-   ADDBA Request frame indicating the TID for which the Block Ack is being set up.
- - The recipient STA shall respond by an ADDBA Response frame. The recipient STA has the option of accepting or rejecting the request. When the 
-   recipient STA accepts, then a Block Ack agreement exists between the originator and recipient.
+ - Tx STA (originator) first check whether the intended recipient STA is capable
+   of participating in BlockAck mechanism by discovering and examining its Delayed
+   BlockAck and Immediate BlockAck capability bits. If the intended recipient
+   STA is capable of participating, the originator sends an ADDBA Request frame
+   indicating the TID for which the BlockAck is being set up.
+ - The recipient STA shall respond by an ADDBA Response frame. The recipient STA
+   has the option of accepting or rejecting the request. When the recipient STA
+   accepts, then a BlockAck agreement exists between the originator and recipient.
 
 Data & BlockAck
- - Originator may transmit a block of QoS data frames separated by SIFS period, with the total number of frames not exceeding the Buffer Size subfield 
-   value in the associated ADDBA Response frame and subject to any additional duration limitations based on the channel access mechanism. Each of the 
-   frames shall have the Ack Policy subfield in the QoS Control field set to Block Ack.
- - The originator requests acknowledgment of outstanding QoS data frames by sending a Basic BlockAckReq frame. The recipient shall maintain a Block 
+ - Originator may transmit a block of QoS data frames separated by SIFS period,
+   with the total number of frames not exceeding the Buffer Size subfield value
+   in the associated ADDBA Response frame and subject to any additional duration
+   limitations based on the channel access mechanism. Each of the frames shall
+   have the Ack Policy subfield in the QoS Control field set to BlockAck.
+ - The originator requests acknowledgment of outstanding QoS data frames by
+   sending a Basic BlockAckReq frame. The recipient shall maintain a Block 
    Ack record for the block.  
 
 Teardown
- - When the originator has no data to send and the final Block Ack exchange has completed, it shall signal the end of its use of the Block Ack 
-   mechanism by sending the DELBA frame to its recipient. There is no management response frame from the recipient. The recipient of the DELBA frame  
-   shall release all resources allocated for the Block Ack transfer.
- - The Block Ack agreement may be torn down if there are no BlockAck, BlockAckReq, or QoS data frames (sent under Block Ack policy) for the Block 
-   Ack’s TID received from the peer within a duration of Block Ack timeout value.
+ - When the originator has no data to send and the final BlockAck exchange has
+   completed, it shall signal the end of its use of the BlockAck mechanism by
+   sending the DELBA frame to its recipient. There is no management response
+   frame from the recipient. The recipient of the DELBA frame shall release all
+   resources allocated for the BlockAck transfer.
+ - The BlockAck agreement may be torn down if there are no BlockAck, BlockAckReq,
+   or QoS data frames (sent under BlockAck policy) for the Block Ack’s TID
+   received from the peer within a duration of BlockAck timeout value.
 
 
-Block Ack primitives:
+BlockAck primitives:
 ---------------------
 MLME-ADDBA.request
 MLME-ADDBA.confirm
@@ -38,293 +55,350 @@ MLME-DELBA.request
 MLME-DELBA.indication
 
 
-Each primitive contains parameters that correspond to a Block Ack Action frame body. Requests and responses may cause these frames to be sent. Confirms and indications are emitted when an appropriate Block Ack Action frame is received.
+Each primitive contains parameters that correspond to a BlockAck Action frame
+body. Requests and responses may cause these frames to be sent. Confirms and
+indications are emitted when an appropriate BlockAck Action frame is received.
 
 MLME-ADDBA.request:
 -------------------
- - This primitive requests the initiation (or modification) of Block Ack with a peer MAC entity.
+ - This primitive requests the initiation (or modification) of BlockAck with
+   a peer MAC entity.
  - The primitive parameters
- 	- PeerSTAAddress	/* Peer MAC entity with which to perform the Block Ack initiation */
- 	- DialogToken		/* a number unique to the Block Ack Action primitives and frames used in defining the Block Ack(0-255) */
- 	- TID				/* TID of the data(0-15) */
- 	- BlockAckPolicy	/* Immediate, Delayed */
- 	- BufferSize		/* number of MPDUs that can be held in its buffer(0-127) */
- 	- BlockAckTimeout	/* number of TUs without a frame exchange between peers after which the Block Ack is considered to be torn down(0-65535) */
- 	- ADDBAFailureTimeout	/* time limit (in TU) after which the Block Ack setup procedure is terminated, from dot11ADDBAResponseTimeout(>= 1) */
- 	- BlockAckStartingSequenceControl	/* value of Block Ack starting sequence control */
- 	- VendorSpecificInfo	/* Zero or more elements */
- - This primitive is generated by the SME(Station management entity) at a STA to request initiation (or modification) of Block Ack with the specified 
-   peer MAC entity.
+     - PeerSTAAddress    /* Peer MAC entity with which to perform the BlockAck initiation */
+     - DialogToken        /* a number unique to the BlockAck Action primitives and frames used in defining the BlockAck(0-255) */
+     - TID                /* TID of the data(0-15) */
+     - BlockAckPolicy    /* Immediate, Delayed */
+     - BufferSize        /* number of MPDUs that can be held in its buffer(0-127) */
+     - BlockAckTimeout    /* number of TUs without a frame exchange between peers after which the BlockAck is considered to be torn down(0-65535) */
+     - ADDBAFailureTimeout    /* time limit (in TU) after which the BlockAck setup procedure is terminated, from dot11ADDBAResponseTimeout(>= 1) */
+     - BlockAckStartingSequenceControl    /* value of BlockAck starting sequence control */
+     - VendorSpecificInfo    /* Zero or more elements */
+ - This primitive is generated by the SME(Station management entity) at a STA to
+   request initiation (or modification) of BlockAck with the specified peer MAC
+   entity.
  - The STA sends the ADDBA Request frame to the specified peer MAC entity.
 
 MLME-ADDBA.confirm:
 -------------------
- - The primitive reports the results of initiation (or modification) of the Block Ack attempt with the specified peer MAC entity.
+ - The primitive reports the results of initiation (or modification) of the Block
+   Ack attempt with the specified peer MAC entity.
  - The primitive parameters
- 	- PeerSTAAddress
- 	- DialogToken
- 	- TID
- 	- ResultCode
- 	- BlockAckPolicy
- 	- BufferSize
- 	- BlockAckTimeout
- 	- VendorSpecificInfo
- - This primitive is generated by the MLME as a result of an MLME-ADDBA.request primitive to indicate the results of that request.
- - The SME is notified of the results of the Block Ack initiation (or modification).
+     - PeerSTAAddress
+     - DialogToken
+     - TID
+     - ResultCode
+     - BlockAckPolicy
+     - BufferSize
+     - BlockAckTimeout
+     - VendorSpecificInfo
+ - This primitive is generated by the MLME as a result of an MLME-ADDBA.request
+   primitive to indicate the results of that request.
+ - The SME is notified of the results of the BlockAck initiation (or modification).
 
 MLME-ADDBA.indication:
 ----------------------
- - This primitive reports the initiation (or modification) of Block Ack by a peer MAC entity.
+ - This primitive reports the initiation (or modification) of BlockAck by a peer
+   MAC entity.
  - The primitive parameters
-	- PeerSTAAddress
-	- DialogToken
-	- TID
-	- BlockAckPolicy
-	- BufferSize
-	- BlockAckTimeout
-	- VendorSpecificInfo
- - This primitive is generated by the MLME as a result of receipt of a Block Ack initiation (or modification) by the specified peer MAC entity in the 
-   form of an ADDBA Request frame.
- - The SME is notified of the initiation (or modification) of the Block Ack by the specified peer MAC entity.
+    - PeerSTAAddress
+    - DialogToken
+    - TID
+    - BlockAckPolicy
+    - BufferSize
+    - BlockAckTimeout
+    - VendorSpecificInfo
+ - This primitive is generated by the MLME as a result of receipt of a BlockAck
+   initiation (or modification) by the specified peer MAC entity in the form of
+   an ADDBA Request frame.
+ - The SME is notified of the initiation (or modification) of the BlockAck by
+   the specified peer MAC entity.
 
 MLME-ADDBA.response:
 --------------------
- - The primitive responds to the initiation (or modification) by a specified peer MAC entity.
+ - The primitive responds to the initiation (or modification) by a specified
+   peer MAC entity.
  - The primitive parameters
- 	- PeerSTAAddress
-	- DialogToken
-	- TID
-	- ResultCode
-	- BlockAckPolicy
-	- BufferSize
-	- BlockAckTimeout
-	- VendorSpecificInfo
- - This primitive is generated by the MLME as a result of an MLME-ADDBA.indication primitive to initiate Block Ack by the specified peer MAC entity.
- - The primitive causes the MAC entity to send an ADDBA Response frame to the specified peer MAC entity.
+     - PeerSTAAddress
+    - DialogToken
+    - TID
+    - ResultCode
+    - BlockAckPolicy
+    - BufferSize
+    - BlockAckTimeout
+    - VendorSpecificInfo
+ - This primitive is generated by the MLME as a result of an MLME-ADDBA.indication
+   primitive to initiate BlockAck by the specified peer MAC entity.
+ - The primitive causes the MAC entity to send an ADDBA Response frame to the
+   specified peer MAC entity.
 
 MLME-DELBA.response:
 --------------------
- - This primitive requests the deletion of Block Ack with a peer MAC entity.
+ - This primitive requests the deletion of BlockAck with a peer MAC entity.
  - The primitive parameters
- 	- PeerSTAAddress	/* address of the peer MAC entity with which to perform the Block Ack deletion */
-	- Direction			/* Originator, Recipient */
-	- TID				/* TID of the MSDUs for which this Block Ack has been set up(0-15) */
-	- ReasonCode		/* Indicates the reason why the Block Ack is being deleted(STA_LEAVING, END_BA, UNKNOWN_BA, TIMEOUT) */
-	- VendorSpecificInfo	/* Zero or more elements */
- - This primitive is generated by the SME at a STA to request deletion of Block Ack with the specified peer MAC entity.
+     - PeerSTAAddress    /* address of the peer MAC entity with which to perform the BlockAck deletion */
+    - Direction            /* Originator, Recipient */
+    - TID                /* TID of the MSDUs for which this BlockAck has been set up(0-15) */
+    - ReasonCode        /* Indicates the reason why the BlockAck is being deleted(STA_LEAVING, END_BA, UNKNOWN_BA, TIMEOUT) */
+    - VendorSpecificInfo    /* Zero or more elements */
+ - This primitive is generated by the SME at a STA to request deletion of
+   BlockAck with the specified peer MAC entity.
  - The STA sends the DELBA frame to the specified peer MAC entity.
 
 MLME-DELBA.indication:
 ----------------------
- - This primitive reports the deletion of Block Ack by a peer MAC entity.
+ - This primitive reports the deletion of BlockAck by a peer MAC entity.
  - The primitive parameters
- 	- PeerSTAAddress
-	- Direction
-	- TID
-	- ReasonCode
-	- VendorSpecificInfo
- - This primitive is generated by the MLME as a result of receipt of a Block Ack deletion by the specified peer MAC entity in the form of a DELBA 
-   frame.
- - The SME is notified of the deletion of the Block Ack by the specified peer MAC entity.
+     - PeerSTAAddress
+    - Direction
+    - TID
+    - ReasonCode
+    - VendorSpecificInfo
+ - This primitive is generated by the MLME as a result of receipt of a BlockAck
+   deletion by the specified peer MAC entity in the form of a DELBA frame.
+ - The SME is notified of the deletion of the BlockAck by the specified peer MAC
+   entity.
 
-- A STA sets the Delayed Block Ack subfield to 1 within the Capability Information field when dot11DelayedBlockAckOptionImplemented is true and sets 
-  it to 0 otherwise.
-- A STA sets the Immediate Block Ack subfield to 1 within the Capability Information field when dot11ImmediateBlockAckOptionImplemented is true and 
-  sets it to 0 otherwise.
+- A STA sets the Delayed BlockAck subfield to 1 within the Capability Information
+  field when dot11DelayedBlockAckOptionImplemented is true and sets it to 0 otherwise.
+- A STA sets the Immediate BlockAck subfield to 1 within the Capability Information
+  field when dot11ImmediateBlockAckOptionImplemented is true and sets it to 0 otherwise.
 
 BlockAck frame format:
 ----------------------
  - The frame format of the BlockAck frame is defined below
- 		
-Octets:		2         2         6   6   variable   4
-		 __________________________________..._________
-		|         |          |    |    |         |     |
-		|  Frame  | Duration | RA | TA |   BA    | FCS |
-		| Control |    ID    |    |    | Control |     |
-		|_________|__________|____|____|___...___|_____|
-    	 <--------Mac Header---------->
+         
+Octets:      2         2        6   6   variable   4
+         __________________________________..._________
+        |         |          |    |    |         |     |
+        |  Frame  | Duration | RA | TA |   BA    | FCS |
+        | Control |    ID    |    |    | Control |     |
+        |_________|__________|____|____|___...___|_____|
+        |<--------Mac Header---------->|
 
- - The RA field of the BlockAck frame is the address of the recipient STA that requested the Block Ack.
+ - The RA field of the BlockAck frame is the address of the recipient STA that
+   requested the BlockAck.
  - The TA field is the address of the STA transmitting the BlockAck frame.
  - The BA Control field is defined below
  
-		B0      B1         B2      B3     B11 B12    B15
-	 ___________________________________________________
-	|        |       |            |          |          |
-	| BA Ack | Multi | Compressed | Reserved | TID_INFO |
-	| Policy |  TID  |   Bitmap   |          |          |
-	|________|_______|____________|__________|__________|
+        B0      B1         B2      B3     B11 B12    B15
+     ___________________________________________________
+    |        |       |            |          |          |
+    | BA Ack | Multi | Compressed | Reserved | TID_INFO |
+    | Policy |  TID  |   Bitmap   |          |          |
+    |________|_______|____________|__________|__________|
 
 Bits:  1         1        1            9          4
 
-				BA Control field
-				 
- - Delayed Block Ack is not used in an Multi-TID BlockAck frame.
- - The values of the Multi-TID and Compressed Bitmap subfields of the BA Control field determine which of three possible BlockAck frame variants is 
-   represented
+                BA Control field
+                 
+ - Delayed BlockAck is not used in an Multi-TID BlockAck frame.
+ - The values of the Multi-TID and Compressed Bitmap subfields of the BA Control
+   field determine which of three possible BlockAck frame variants is represented
 
- 	Multi-TID		 Compressed Bitmap               		BlockAck frame variant
- 	-------------------------------------------------------------------------------
-		0 						0 							Basic BlockAck
-		0 						1 							Compressed BlockAck
-		1 						0 							Reserved
-		1					 	1 							Multi-TID BlockAck
-		
- - The meaning of the TID_INFO subfield of the BA Control field depends on the BlockAck frame variant type. The meaning of this subfield is explained 
-   within the subclause for each of the BlockAck frame variants.
+     Multi-TID    Compressed Bitmap    BlockAck frame variant
+     ---------------------------------------------------------
+        0              0               Basic BlockAck
+        0              1               Compressed BlockAck
+        1              0               Reserved
+        1              1               Multi-TID BlockAck
+        
+ - The meaning of the TID_INFO subfield of the BA Control field depends on the
+   BlockAck frame variant type. The meaning of this subfield is explained 
+   within the subclauses for each of the BlockAck frame variants.
 
- - The meaning of the BA Information field depends on the BlockAck frame variant type. The meaning of this field is explained within the subclause for 
-   each of the BlockAck frame variants.
+ - The meaning of the BA Information field depends on the BlockAck frame variant
+   type. The meaning of this field is explained within the subclauses for each
+   of the BlockAck frame variants.
 
 Basic BlockAck variant: 
 -----------------------
- - The BA Information field of the Basic BlockAck frame comprises the Block Ack Starting Sequence Control subfield and the Block Ack Bitmap subfield, 
-   as shown below.
- - The Starting Sequence Number subfield of the Block Ack Starting Sequence Control subfield contains the sequence number of the first MSDU for which
-   this Basic BlockAck frame is sent and is set to the same value as in the immediately previously received Basic BlockAckReq frame.
+ - The BA Information field of the Basic BlockAck frame comprises the BlockAck
+   Starting Sequence Control subfield and the BlockAck Bitmap subfield, as
+   shown below.
+ - The Starting Sequence Number subfield of the BlockAck Starting Sequence
+   Control subfield contains the sequence number of the first MSDU for which
+   this Basic BlockAck frame is sent and is set to the same value as in the
+   immediately previously received Basic BlockAckReq frame.
   
-	 _________________________________________________________
-	|                                     |                  |
-	| Block Ack Starting Sequence Control | Block Ack Bitmap |
-	|_____________________________________|__________________|
+     _________________________________________________________
+    |                                     |                  |
+    | BlockAck Starting Sequence Control  | BlockAck Bitmap  |
+    |_____________________________________|__________________|
 
-Octets:             2          					128
-			BA Information field (Basic BlockAck)
+Octets:             2                              128
+            BA Information field (Basic BlockAck)
 
- - The Block Ack Bitmap subfield is 128 octets in length and is used to indicate the received status of up to 64 MSDUs. 
- - Bit position n of the Block Ack bitmap, if equal to 1, acknowledges receipt of an MPDU with an MPDU sequence control value equal to (Block Ack 
-   Starting Sequence Control + n).
- - Bit position n of the Block Ack bitmap, if equal to 0, indicates that an MPDU with MPDU sequence control value equal to (Block Ack Starting 
-   Sequence Control + n) has not been received.
- - Each of the MPDU Sequence Control field and Block Ack Starting Sequence Control subfield values are treated as a 16-bit unsigned integer. For
-   unused fragment numbers of an MSDU, the corresponding bits in the bitmap are set to 0.
+ - The BlockAck Bitmap subfield is 128 octets in length and is used to indicate
+   the received status of up to 64 MSDUs. 
+ - Bit position n of the BlockAck bitmap, if equal to 1, acknowledges receipt
+   of an MPDU with an MPDU sequence control value equal to (BlockAck Starting Sequence Control + n).
+ - Bit position n of the BlockAck bitmap, if equal to 0, indicates that an MPDU
+   with MPDU sequence control value equal to (BlockAck Starting Sequence Control + n)
+   has not been received.
+ - Each of the MPDU Sequence Control field and BlockAck Starting Sequence
+   Control subfield values are treated as a 16-bit unsigned integer. For
+   unused fragment numbers of an MSDU, the corresponding bits in the bitmap
+   are set to 0.
 
 Compressed BlockAck variant:
 ----------------------------
- - The BA Information field of the Compressed BlockAck frame comprises the Block Ack Starting Sequence Control subfield and the Block Ack Bitmap 
+ - The BA Information field of the Compressed BlockAck frame comprises the
+   BlockAck Starting Sequence Control subfield and the BlockAck Bitmap 
    subfield, as shown below.
- - The Starting Sequence Number subfield of the Block Ack Starting Sequence Control subfield contains the sequence number of the first MSDU or A-MSDU 
+ - The Starting Sequence Number subfield of the BlockAck Starting Sequence
+   Control subfield contains the sequence number of the first MSDU or A-MSDU 
    for which this BlockAck frame is sent.
- - The Fragment Number subfield of the Block Ack Starting Sequence Control subfield is set to 0.
+ - The Fragment Number subfield of the BlockAck Starting Sequence Control
+   subfield is set to 0.
  
-	 ________________________________________________________
-	|                                     |                  |
-	| Block Ack Starting Sequence Control | Block Ack Bitmap |
-	|_____________________________________|__________________|
+     ________________________________________________________
+    |                                     |                  |
+    | BlockAck Starting Sequence Control  | BlockAck Bitmap  |
+    |_____________________________________|__________________|
 
-Octets:             2          					8
-			BA Information field (Compressed BlockAck)
+Octets:             2                              8
+            BA Information field (Compressed BlockAck)
 
- - The Block Ack Bitmap subfield of the BA Information field of the Compressed BlockAck frame is 8 octets in length and is used to indicate the 
-   received status of up to 64 MSDUs and A-MSDUs.
- - Each bit that is equal to 1 in the compressed Block Ack bitmap acknowledges the successful reception of a single MSDU or A-MSDU in the order of 
-   sequence number, with the first bit of the Block Ack bitmap corresponding to the MSDU or A-MSDU with the sequence number that matches the value of 
-   the Starting Sequence Number subfield of the Block Ack Starting Sequence Control subfield.
+ - The BlockAck Bitmap subfield of the BA Information field of the Compressed
+   BlockAck frame is 8 octets in length and is used to indicate the received
+   status of up to 64 MSDUs and A-MSDUs.
+ - Each bit that is equal to 1 in the compressed BlockAck bitmap acknowledges
+   the successful reception of a single MSDU or A-MSDU in the order of 
+   sequence number, with the first bit of the BlockAck bitmap corresponding to
+   the MSDU or A-MSDU with the sequence number that matches the value of 
+   the Starting Sequence Number subfield of the BlockAck Starting Sequence
+   Control subfield.
 
 Multi-TID BlockAck variant:
 ---------------------------
- - The TID_INFO subfield of the BA Control field of the Multi-TID BlockAck frame contains the number of TIDs, less one, for which information is 
-   reported in the BA Information field. For example, a value of 2 in the TID_INFO subfield means that information for three TIDs is present.
- - The BA Information field of the Multi-TID BlockAck frame comprises 1 or more instances of the Per TID Info, Block Ack Starting Sequence Control, 
-   and the Block Ack Bitmap subfields.
- - The Starting Sequence Number subfield of the Block Ack Starting Sequence Control subfield is the sequence number of the first MSDU or A-MSDU for    
-   which this BlockAck frame is sent.
- - The Fragment Number subfield of the Block Ack Starting Sequence Control subfield is set to 0. The first instance of the Per TID Info, Block Ack 
-   Starting Sequence Control, and Block Ack Bitmap subfields that is transmitted corresponds to the lowest TID value, with subsequent instances
-   ordered by increasing values of the Per TID Info subfield.
+ - The TID_INFO subfield of the BA Control field of the Multi-TID BlockAck frame
+   contains the number of TIDs, less one, for which information is reported in
+   the BA Information field. For example, a value of 2 in the TID_INFO subfield
+   means that information for three TIDs is present.
+ - The BA Information field of the Multi-TID BlockAck frame comprises 1 or more
+   instances of the Per TID Info, BlockAck Starting Sequence Control, and the
+   BlockAck Bitmap subfields.
+ - The Starting Sequence Number subfield of the BlockAck Starting Sequence Control
+   subfield is the sequence number of the first MSDU or A-MSDU for which this
+   BlockAck frame is sent.
+ - The Fragment Number subfield of the BlockAck Starting Sequence Control
+   subfield is set to 0. The first instance of the Per TID Info, BlockAck 
+   Starting Sequence Control, and BlockAck Bitmap subfields that is transmitted
+   corresponds to the lowest TID value, with subsequent instances ordered by
+   increasing values of the Per TID Info subfield.
 
-Octets:    2          				2 							8
-	 _______________________________________________________________________
-	|              |                                     |                  |
-	| Per TID Info | Block Ack Starting Sequence Control | Block Ack Bitmap |
-	|______________|_____________________________________|__________________|
-     <--------------------Repeat for each TID ----------------------------->
+Octets:    2                          2                             8
+     _______________________________________________________________________
+    |              |                                     |                  |
+    | Per TID Info | BlockAck Starting Sequence Control  | BlockAck Bitmap  |
+    |______________|_____________________________________|__________________|
+    |<--------------------Repeat for each TID ----------------------------->|
 
-			    BA Information field (Multi-TID BlockAck)
+                BA Information field (Multi-TID BlockAck)
 
-Block Ack Parameter Set field
+BlockAck Parameter Set field
 -----------------------------
- - The Block Ack Parameter Set field is used in ADDBA frames to signal the parameters for setting up a Block Ack. The length of the Block Ack
+ - The BlockAck Parameter Set field is used in ADDBA frames to signal the
+   parameters for setting up a BlockAck. The length of the BlockAck
    Parameter Set field is 2 octets.
 
-		B0          B1      B2     B5 B6     B15
-	 _________________________________________
-	|          |           |         |        |
-	|  A-MSDU  | Block Ack |   TID   | Buffer |
-	| Suppored |  Policy   |         |  Size  |
-	|__________|___________|_________|________|
+     B0          B1      B2     B5 B6     B15
+     _________________________________________
+    |          |           |         |        |
+    |  A-MSDU  | BlockAck  |   TID   | Buffer |
+    | Suppored |  Policy   |         |  Size  |
+    |__________|___________|_________|________|
 
-Bits:  1            1          4         10
+Bits:    1          1           4         10
 
- - The A-MSDU Supported subfield determines whether an A-MSDU may be carried in a QoS data MPDU sent under this Block Ack agreement. When equal to 1, 
-   use of A-MSDU is permitted. When equal to 0, use of A-MSDU is not permitted.
- - The Block Ack Policy subfield is set to 1 for immediate Block Ack and 0 for delayed Block Ack.
- - The TID subfield contains the value of the TC or TS for which the BlockAck is being requested.
- - The Buffer Size subfield indicates the number of buffers available for this particular TID. 21 When the A-MSDU Supported field is equal to 0 as 
-   indicated by the STA transmitting the Block Ack Parameter Set field, each buffer is capable of holding a number of octets equal to the maximum size 
-   of an MSDU. When the A-MSDU Supported field is equal to 1 as indicated by the STA, each buffer is capable of holding a number of octets equal to 
-   the maximum size of an A-MSDU that is supported by the STA.
- - In an ADDBA Request frame, the Buffer Size subfield is intended to provide guidance for the frame receiver to decide its reordering buffer size and 
-   is advisory only. If the Buffer Size subfield is equal to 0, it implies that the originator of the Block Ack has no information to specify its
-   value.
- - In an ADDBA Response frame, when the Status Code field is equal to 0, the Buffer Size subfield is set to a value of at least 1.
+ - The A-MSDU Supported subfield determines whether an A-MSDU may be carried in
+   a QoS data MPDU sent under this BlockAck agreement. When equal to 1, use of
+   A-MSDU is permitted. When equal to 0, use of A-MSDU is not permitted.
+ - The BlockAck Policy subfield is set to 1 for immediate BlockAck and 0 for
+   delayed BlockAck.
+ - The TID subfield contains the value of the TC or TS for which the BlockAck
+   is being requested.
+ - The Buffer Size subfield indicates the number of buffers available for this
+   particular TID. 21 When the A-MSDU Supported field is equal to 0 as indicated
+   by the STA transmitting the BlockAck Parameter Set field, each buffer is
+   capable of holding a number of octets equal to the maximum size of an MSDU.
+   When the A-MSDU Supported field is equal to 1 as indicated by the STA, each
+   buffer is capable of holding a number of octets equal to the maximum size of
+   an A-MSDU that is supported by the STA.
+ - In an ADDBA Request frame, the Buffer Size subfield is intended to provide
+   guidance for the frame receiver to decide its reordering buffer size and 
+   is advisory only. If the Buffer Size subfield is equal to 0, it implies that
+   the originator of the BlockAck has no information to specify its value.
+ - In an ADDBA Response frame, when the Status Code field is equal to 0, the
+   Buffer Size subfield is set to a value of at least 1.
 
-Block Ack Timeout Value field:
+BlockAck Timeout Value field:
 ------------------------------
- - The Block Ack Timeout Value field is used in the ADDBA Request and Response frames to indicate the timeout value for Block Ack. The length of the 
-   Block Ack Timeout Value field is 2 octets.
+ - The BlockAck Timeout Value field is used in the ADDBA Request and Response
+   frames to indicate the timeout value for BlockAck. The length of the 
+   BlockAck Timeout Value field is 2 octets.
 
-	 _________________________
-	|                         |
-	| Block Ack Timeout Value |
-	|_________________________|
-				2 	
+     _________________________
+    |                         |
+    | BlockAck Timeout Value  |
+    |_________________________|
+                2     
 
- - The Block Ack Timeout Value field contains the duration, in TUs, after which the Block Ack setup is terminated, if there are no frame exchanges
-   within this duration using this Block Ack agreement. A value of 0 disables the timeout.
+ - The BlockAck Timeout Value field contains the duration, in TUs, after which
+   the BlockAck setup is terminated, if there are no frame exchanges with in
+   this duration using this BlockAck agreement. A value of 0 disables the timeout.
    
 DELBA Parameter Set field:
 --------------------------
- - The DELBA Parameter Set field is used in a DELBA frame to terminate an already setup Block Ack. The length of the DELBA Parameters field is 2
-   octets.
+ - The DELBA Parameter Set field is used in a DELBA frame to terminate an already
+   setup BlockAck. The length of the DELBA Parameters field is 2 octets.
    
-	 B0     B10     B11     B12   B15
-	 _________________________________
-	|          |           |         |
-	| Reserved | Initiator |   TID   |
-	|__________|___________|_________|
+     B0     B10     B11     B12   B15
+     ________________________________
+    |          |           |         |
+    | Reserved | Initiator |   TID   |
+    |__________|___________|_________|
 
 Bits:  11           1          4
 
- - The Initiator subfield indicates if the originator or the recipient of the data is sending this frame. It is set to 1 to indicate the originator 
-   and is set to 0 to indicate the recipient. The TID subfield indicates the TSID or the UP for which the Block Ack has been originally set up.
+ - The Initiator subfield indicates if the originator or the recipient of the
+   data is sending this frame. It is set to 1 to indicate the originator and
+   is set to 0 to indicate the recipient. The TID subfield indicates the TSID
+   or the UP for which the BlockAck has been originally set up.
    
-Block Ack Action frame details:
+BlockAck Action frame details:
 -------------------------------
- - The ADDBA frames are used to set up or, if PBAC is used, to modify Block Ack for a specific TC or TS. A Block Ack Action field, in the octet 
-   immediately after the Category field, differentiates the Block Ack Action frame formats.
- - The Block Ack Action field values associated with each frame format within the Block Ack category are
-   	  Block Ack Action field values 		Meaning
-			0 								ADDBA Request
-			1								ADDBA Response
-			2 								DELBA
-			3–255 							Reserved
+ - The ADDBA frames are used to set up or, if PBAC is used, to modify BlockAck
+   for a specific TC or TS. A BlockAck Action field, in the octet immediately
+   after the Category field, differentiates the BlockAck Action frame formats.
+ - The BlockAck Action field values associated with each frame format within
+   the BlockAck category are
+        BlockAck Action    Meaning
+          field values
+        ---------------------------------
+            0             ADDBA Request
+            1             ADDBA Response
+            2             DELBA
+            3–255         Reserved
+
 ADDBA Request frame format
 --------------------------
- - An ADDBA Request frame is sent by an originator of Block Ack to another STA. The Action field of an ADDBA Request frame contains the information
-   shown below:
-   		Order		Information
-		  1 		Category
-		  2 		Block Ack Action
-		  3 		Dialog Token
-		  4 		Block Ack Parameter Set
-		  5 		Block Ack Timeout Value
-		  6 		Block Ack Starting Sequence Control
- - The Category field is set to 3 (representing Block Ack).
- - The Block Ack Action field is set to 0 (representing ADDBA request).
+ - An ADDBA Request frame is sent by an originator of BlockAck to another STA.
+   The Action field of an ADDBA Request frame contains the information shown below:
+       Order        Information
+       ------------------------------------------------
+         1          Category
+         2          BlockAck Action
+         3          Dialog Token
+         4          BlockAck Parameter Set
+         5          BlockAck Timeout Value
+         6          BlockAck Starting Sequence Control
+ 
+ - The Category field is set to 3 (representing BlockAck).
+ - The BlockAck Action field is set to 0 (representing ADDBA request).
  - The Dialog Token field is set to a nonzero value chosen by the STA.
- - The Block Ack Parameter Set field is defined above.
- - The Block Ack Timeout Value field is defined above.
- - The Block Ack Starting Sequence Control field is defined above.
+ - The BlockAck Parameter Set field is defined above.
+ - The BlockAck Timeout Value field is defined above.
+ - The BlockAck Starting Sequence Control field is defined above.
  
 
