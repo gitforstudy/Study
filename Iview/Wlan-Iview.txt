@@ -7,19 +7,21 @@ Wlan:
 - Connection procedure and frame exchange
 - 4 way handshake
 - Data and management path
+- Explain Data Frame Address Fields
 - CSMA/CA and CSMA/CD
 - MAC Access Modes and Timing
-- How QoS packets are queu and transmitted
+- How QoS packets are queue and transmitted
 - How AP beacons ? Beacon Tx/Rx path.
+- Explain frame aggregation
+- Explain BlockAck Mechanism
+- Explain fragmentation and Defragmentation
 
 - QoS 11e/11n
-- BlockAck
 - power saving mechanism
 - frame format beacon, probe request/response, auth_seq1/auth_seq2 &
   association request/response
 - Difference in IEEE80211 standards a, b, g, n, ac, ax, ah
-- What is short gaurd interval
-- What is dcf, pcf concept
+- What is short guard interval
 - What is difs, sifs and aifs
 - Difference between AMSDU and AMPDU
 - Significance of regulatory domain in Wlan
@@ -142,23 +144,23 @@ Any overlapping independent BSSs may also respond.
 
 The relationship between the transmission of Probe frames and the various
 timing intervals that can be configured as part of a scan.
-- The scanning station transmits the Probe Request after gaining access to
-  the medium. Both access points respond with a Probe Response that reports
-  their network's parameters. Note that the second Probe Response is subject
-  to the rules of the distributed coordination function and must wait for
-  the contention window to elapse before transmitting.
-- The first response is transmitted before the minimum response time elapses,
-  so the station waits until the maximum response time has elapsed before
-  collating the results. In areas with a large number of networks, it may
-  be necessary to adjust the maximum channel time so the responses from all
-  the access points in the area can be processed.
+ - The scanning station transmits the Probe Request after gaining access to
+   the medium. Both access points respond with a Probe Response that reports
+   their network's parameters. Note that the second Probe Response is subject
+   to the rules of the distributed coordination function and must wait for
+   the contention window to elapse before transmitting.
+ - The first response is transmitted before the minimum response time elapses,
+   so the station waits until the maximum response time has elapsed before
+   collating the results. In areas with a large number of networks, it may
+   be necessary to adjust the maximum channel time so the responses from all
+   the access points in the area can be processed.
 
 Active-scan scans for 30 milliseconds once every second, unless either of
 the following conditions is true:
-- High-priority traffic (voice or video) is present at 64 Kbps or higher.
-  In this case, active-scan scans for 30 milliseconds every 60 seconds.
-- Heavy data traffic is present at 4 Mbps or higher. In this case,
-  active-scan scans for 30 milliseconds every 5 seconds.
+ - High-priority traffic (voice or video) is present at 64 Kbps or higher.
+   In this case, active-scan scans for 30 milliseconds every 60 seconds.
+ - Heavy data traffic is present at 4 Mbps or higher. In this case,
+   active-scan scans for 30 milliseconds every 5 seconds.
 
 Scan Report:
 ------------
@@ -224,14 +226,14 @@ Ans: Passive scan can not find the networks which is configured and enabled
 d.   What Channels Are Scanned?
 Ans: RF scanning can be performed on a variety of different sets of channel
      ranges or frequencies. The scan can be configured in the Radio profile
-	 to scan either operating channels, regulatory channels, or all channels.
-	 In a Radio profile, you can change the channels a radio actively scans.
-	 These are the three options for active scanning :
-     - Operating: Only the current channel is scanned and audited.
-     - Regulatory: Only regulatory channels are scanned and audited. If the
-	   radio is configured for 802.11b/g/n, the most commonly used channels,
-	   such as 1, 6, or 11, are scanned and audited more frequently.
-     - All: All channels are scanned and audited.
+     to scan either operating channels, regulatory channels, or all channels.
+     In a Radio profile, you can change the channels a radio actively scans.
+     These are the three options for active scanning :
+      - Operating: Only the current channel is scanned and audited.
+      - Regulatory: Only regulatory channels are scanned and audited. If the
+	radio is configured for 802.11b/g/n, the most commonly used channels,
+	such as 1, 6, or 11, are scanned and audited more frequently.
+      - All: All channels are scanned and audited.
 
 2.   What is dfs, how it works? What is slave dfs and master dfs ?
 Ans: Wi-Fi networks operate in areas of RF spectrum that require no license
@@ -313,12 +315,12 @@ Ans: Wi-Fi networks operate in areas of RF spectrum that require no license
      UNII-3 is intended mainly for Radar products and may be used as indoor
      for long distance RF links WLAN as well.
 
-     Band	      DFS	          Channel	  Frequency (MHz)
-     ------------------------------------------------------
-     U-NII-1		              36 – 48	  5170 – 5250
-     U-NII-2A	  DFS required	  52 – 64	  5250 – 5330
-     U-NII-2C	  DFS required    100 – 140	  5490 – 5710
-     U-NII-3		              149 – 165	  5735 – 5835
+     Band         DFS              Channel      Frequency (MHz)
+     -----------------------------------------------------------
+     U-NII-1                       36 – 48      5170 – 5250
+     U-NII-2A     DFS required     52 – 64      5250 – 5330
+     U-NII-2C     DFS required     100 – 140    5490 – 5710
+     U-NII-3                       149 – 165    5735 – 5835
 
 FAQ's [DFS]:
 ------------
@@ -488,7 +490,7 @@ Ans: Access points are bridges that bridge traffic between mobile stations
      but not yet associated, it will respond with a disassociation frame
      placing the mobile into an authenticated but unassociated state.
 
-     6. If the elements in the association request match the capabilties of
+     6. If the elements in the association request match the capabilities of
      the AP, the AP will create an Association ID for the mobile station and
      respond with an association response with a success message granting
      network access to the mobile station.
@@ -529,7 +531,7 @@ Ans: The 4-way handshake is the process of exchanging 4 messages between an
          GMK is randomly created on Authenticator & refresh it in configured
          time interval to reduce the risk of GMK being compromised.
        - PTK-Pairwise Transient Key:
-         A value derived from PMK, Authenicator nonce(Anonce), Supplicant
+         A value derived from PMK, Authenticator nonce(Anonce), Supplicant
          nonce(Snonce), Authenticator Address, Supplicant Address. This is
          used to encrypt all unicast transmission between client & an AP.
          The client and access point will derive their own separate pairwise
@@ -547,7 +549,7 @@ Ans: The 4-way handshake is the process of exchanging 4 messages between an
          5. Temporal MIC-2
        - GTK-Group Temporal Key:
          GTK is used to encrypt all broadcast/multicast transmission between
-         an AP & multiple client statsions. GTK is derived on Authenticator &
+         an AP & multiple client stations. GTK is derived on Authenticator &
          sending to supplicant during 4-Way Handshake (M3)
 
      In case of 802.1X/EAP authentication, when the access point sends an
@@ -555,10 +557,10 @@ Ans: The 4-way handshake is the process of exchanging 4 messages between an
      in mind that the authentication process has already generated the
      master keys (PMK and GMK), which will be used by the 4-Way Handshake to
      derive the temporal keys.
-     In case of WPA2-psk 4 way handshak starts immediately after Open System
+     In case of WPA2-psk 4 way handshake starts immediately after Open System
      Authentication & Association state finish.
 
-     STA/Supplicant                                          AP/Authenicator
+     STA/Supplicant                                          AP/Authenticator
             |                                                       |
             |                          Message1: EAPOL-key (Anonce) |
 Derive PTK  |<------------------------------------------------------|
@@ -567,24 +569,24 @@ Derive PTK  |<------------------------------------------------------|
             |------------------------------------------------------>|Derive
             |                                                       |PTK and
             |               Message3: EAPOL-key (Install PTK, RSNE, |GTK
-            |                                    MIC, Encryted GTK) |
+            |                                    MIC, Encrypted GTK)|
             |<------------------------------------------------------|if needed
             |                                                       |
-            | Message3: EAPOL-key (MIC)                             |
-Install PTK |<------------------------------------------------------|
+            | Message4: EAPOL-key (MIC)                             |
+Install PTK |------------------------------------------------------>|
 and GTK     |                                                       |
 
-     4-way handshak frame exchange:
+     4-way handshake frame exchange:
        - M1: The authenticator and supplicant each randomly create their
          respective nonces. The authenticator sends an EAPOL-Key frame
          containing an ANonce to the supplicant. The supplicant now has all
-         the necessary inputs for the pseudorandom function. The supplicant
+         the necessary inputs for the pseudo random function. The supplicant
          derives a PTK from the PMK, ANonce, SNonce, and MAC addresses.
          The supplicant is now in possession of a pairwise transient key that
          can be used to encrypt unicast traffic.
        - M2: The supplicant sends an EAPOL-Key frame containing an SNonce to
          the authenticator. The authenticator now has all the necessary inputs
-         for the pseudorandom function. The supplicant also sends its RSN
+         for the pseudo random function. The supplicant also sends its RSN
          information element capabilities to the authenticator and a message
          integrity code (MIC). The authenticator derives a PTK from the PMK,
          ANonce, SNonce, and MAC addresses. The authenticator also validates
@@ -763,30 +765,111 @@ Ans: Data Path: Corresponds to ieee80211 data frames
 
      const struct cfg80211_ops mac80211_config_ops = {
                                                       .scan = ieee80211_scan,
-     };
+                                                     };
 
      In mac80211, ieee80211_scan will take over the scanning process:
-     -- ieee80211_scan_state_send_probe
-     -- ieee80211_send_probe_req
-     -- ieee80211_tx_skb_tid_band
-     -- ieee80211_xmit
-     -- ieee80211_tx
-     -- ieee80211_tx_frags
-     -- drv_tx
+      -- ieee80211_scan_state_send_probe
+      -- ieee80211_send_probe_req
+      -- ieee80211_tx_skb_tid_band
+      -- ieee80211_xmit
+      -- ieee80211_tx
+      -- ieee80211_tx_frags
+      -- drv_tx
 
-8.   CSMA/CA and CSMA/CD
+8.   Explain Data Frame Address Fields
+Ans: Below shows a frame format of a Data Frame. (source IEEE 802.11-2012 standard)
+     Octets:
+         2        2        6       6       6       2        6       2       4   0-7951 4
+      ____________________________________________________________________________________
+     |Frame  |Duration/|Address|Address|Address|Sequence|Address|QoS    |HT     |Frame|   |
+     |Control|ID       |   1   |    2  |   3   |Control |   4   |Control|Control|Body |FCS|
+     |_______|_________|_______|_______|_______|________|_______|_______|_______|_____|___|
+     |                                                                          |
+     |<------------------------------Mac Header-------------------------------->|
+
+     The content of the address fields of data frames are dependent upon the values
+     of the To DS and From DS fields in the Frame Control field and whether the Frame
+     Body field contains either an MSDU (or fragment thereof) or an entire A-MSDU,
+     as determined by the A-MSDU Present subfield of the QoS Control field.
+     
+     The content of the address fields is shown in below table (source IEEE 802-11 2012 Table 8-19).
+     Where the content of a field is shown as not applicable (N/A), the field is omitted.
+     Note that Address 1 always holds the receiver address of the intended receiver,
+     and that Address 2 always holds the address of the STA that is transmitting the frame.
+     
+        _____________________________________________________________________________________
+       | To | From |   Address  |   Address  |       Address 3       |       Address 4       |
+       | DS |  DS  |      1     |      2     |-----------------------|-----------------------|
+       |    |      |            |            |MSDU case |A-MSDU case |MSDU case |A-MSDU case |
+       |____|______|____________|____________|__________|____________|__________|____________|
+       | 0  |  0   |  RA = DA   |  TA = SA   |  BSSID   |   BSSID    |   N/A    |    N/A     |
+       |    |      |            |            |          |            |          |            |
+       | 0  |  1   |  RA = DA   | TA = BSSID |   SA     |   BSSID    |   N/A    |    N/A     | 
+       |    |      |            |            |          |            |          |            |
+       | 1  |  0   | RA = BSSID |  TA = SA   |   DA     |   BSSID    |   N/A    |    N/A     |
+       |    |      |            |            |          |            |          |            |
+       | 1  |  1   |     RA     |     TA     |   DA     |   BSSID    |   N/A    |   BSSID    |
+       |____|______|____________|____________|__________|____________|__________|____________|
+     
+     CWAP-Data-Address-01These addresses field descriptions as shown as below.
+     
+     Source Address (SA) : This is the address where the frame is sent from.
+     Destination Address (DA) : This is the address where the frame is being sent to.
+     Transmitter Address (TA) : This is the address of the station that is transmitting
+     the RF frame.
+     Receiver Address (RA) : This is the address of the station that is receiving the
+     RF frame.
+     Basic Service Set Identifier (BSSID) : This is the basic service set ID of the AP.
+     
+     Typically all 4 address fields are used only in Wireless Distribution system (WDS)
+     or Mesh AP back-haul scenarios. Below shows a Wireless bridge topology where you
+     can see all the 4 address fields are being used.
+     
+     In case of a A-MSDU frame, Address 3 will be always BSSID. If address 4 is used
+     that also BSSID.
+     
+     For data frames of subtype Null (no data), CF-Ack (no data), CF-Poll (no data),
+     and CF-Ack+CF-Poll (no data) and for the corresponding QoS data frame subtypes,
+     the Frame Body field is null (i.e., has a length of 0 octets); these subtypes are
+     used for MAC control purposes.
+     
+     For data frames of subtypes Data, Data+CF-Ack, Data+CF-Poll, and Data+CF-Ack+CF-Poll,
+     the Frame Body field contains all of, or a fragment of, an MSDU after any
+     encapsulation for security.
+     
+     For data frames of subtypes QoS Data, QoS Data+CF-Ack, QoS Data+CF-Poll, and
+     QoS Data+CF-Ack+CF-Poll, the Frame Body field contains an MSDU (or fragment thereof)
+     or A-MSDU after any encapsulation for security.
+     
+     The maximum length of the Frame Body field can be determined from the maximum MSDU
+     length plus the length of the Mesh Control field (if present) plus any overhead from
+     encapsulation for encryption (i.e., it is always possible to send a maximum length MSDU,
+     with any encapsulations provided by the MAC layer within a single data MPDU). When the
+     frame body carries an A-MSDU, the size of the frame body field is limited by:
+      — The PHY’s maximum PLCP service data unit (PSDU) length
+      — If A-MPDU aggregation is used, a maximum MPDU length of 4095 octets
+     
+     The duration value calculation for the data frame is based on the rules in 9.7 that
+     determine the data rate at which the control frames in the frame exchange sequence
+     are transmitted. If the calculated duration includes a fractional microsecond, that
+     value is rounded up to the next higher integer. All STAs process Duration/ID field
+     values less than or equal to 32 767 from valid data frames (without regard for the
+     RA, DA, and/or BSSID address values that might be present in these frames) to update
+     their NAV settings as appropriate under the coordination function rules.
+
+9.   CSMA/CA and CSMA/CD
 Ans: The basic principles of CSMA/CA are:
      Carrier Sense to detect incoming transmissions
      Clear Channel Assessment (CCA) and Network Allocation Vector (NAV) to
      determine if the medium is idle and it is acceptable for the station to
-     transmit a frame Positive acknowledgement of frames to pro-actively avoid
+     transmit a frame Positive acknowledgment of frames to pro-actively avoid
      collisions since wireless receivers cannot passively determine if a
      collision has occurred as the RF energy is dispersed. This is in contrast
      to wired Ethernet’s use of CSMA/CD and collision detection where the
      receiver is able to detect collisions since the energy is reflected
      through the wire back to the transmitter.
 
-9.   MAC Access Modes and Timing
+10.   MAC Access Modes and Timing
 Ans: Access to the wireless medium is controlled by coordination functions.
      Ethernet-like CSMA/CA access is provided by the distributed coordination
      function (DCF). If contention-free service is required, it can be provided
@@ -822,7 +905,7 @@ Ans: Access to the wireless medium is controlled by coordination functions.
 
 
 
-10.  How QoS packets are queud and transmitted
+11.  How QoS packets are queued and transmitted
 Ans: Quality of Service (QoS) is a suite of technologies used to manage
      bandwidth usage as data crosses computer networks. Its most common use is
      fo protection of real-time and high priority data applications. QoS
@@ -836,7 +919,7 @@ Ans: Quality of Service (QoS) is a suite of technologies used to manage
      enters or leaves a network device. If the queues are not emptied, they
      overflow and drop traffic.
 
-11.  How AP beacons ? Beacon Tx/Rx path ?
+12.  How AP beacons ? Beacon Tx/Rx path ?
 Ans: Interfaces are created based on radio supported by hardware and configuration
      then it will be up. ACS functionality will check the available channel and
      DFC functionality will ensure that selecting channel does not interfere with
@@ -847,6 +930,191 @@ Ans: Interfaces are created based on radio supported by hardware and configurati
      beacon interval.
 	 
 	 Beacon Tx Path:
+	 /* Need to complete */
 	 
 	 Beacon Rx Path:
+	 /* Need to complete */
 	 
+	 
+13.  Explain frame aggregation.
+Ans: In 802.11n standard, Frame Aggregation was the most important MAC enhancement
+     proposed which maximize throughput and efficiency. There are two method
+     available to perform frame aggregation.
+
+     1. Aggregate MAC Service Data Unit (A-MSDU)
+     2. Aggregate MAC Protocol Data Unit (A-MPDU)
+
+     The main distinction between MSDU & MPDU is the former corresponds to upper
+     part of MAC sublayer where as MPDU.
+     Frame aggregation allows multiple smaller MSDU or MPDUs to be grouped together
+     into a single frame, reducing the amount of overhead that would have been necessary
+     for each individual frame.
+
+     An A-MSDU is a sequence of A-MSDU subframes as shown below. Each A-MSDU
+     subframe consists of an A-MSDU subframe header followed by an MSDU and
+     0 to 3 octets of padding. Each A-MSDU subframe (except the last) is padded
+     so that its length is a multiple of 4 octets. The last A-MSDU subframe has
+     no padding.
+
+      _______________________________________________________________
+     |                  |                  |     |                   |
+     | A-MSDU subframe1 | A-MSDU subframe2 | ... | A-MSDU subframe-n |
+     |__________________|__________________|_____|___________________|
+
+                          A-MSDU structure
+      Octets:
+                06     06       02      0-2304      0-3
+              _____________________________________________
+             |      |      |          |        |           |
+             |  DA  |  SA  |  Length  |  MSDU  |  Padding  |
+             |______|______|__________|________|___________|
+             |                        |
+             |<A-MSDU subframe header>|
+	 
+	                    A-MSDU subframe structure
+						
+     A-MSDU Operation
+	 
+     - If encryption is enabled, then all MSDU are encrypted together as a
+       single payload.
+     - An A-MSDU shall contain only MSDUs whose DA and SA parameter values map
+       to the same RA and TA values.
+     - The constituent MSDUs of an A-MSDU shall all have the same priority
+       parameter value.
+     - An A-MSDU shall be carried, without fragmentation, within a single QoS
+       data MPDU.
+     - The Address 1 field of an MPDU carrying an A-MSDU shall be set to an
+       individual address.
+     - The channel access rules for a QoS data MPDU carrying an A-MSDU are the
+       same as a data MPDU carrying an MSDU (or fragment thereof) of the same TID.
+     - The maximum MPDU length that can be transported using A-MPDU aggregation
+       is 4095 octets.
+     - An A-MSDU cannot be fragmented. Therefore, an A-MSDU of a length that
+       exceeds 4065 octets (4095 minus the QoS data MPDU overhead) cannot be
+       transported in an A-MPDU.
+
+     Below diagram (CWAP Study Guide – Page 225) show the A-MSDU Aggregation
+
+                         Max
+                      2304 Bytes
+     Layer 3          __________     __________     __________
+       |             |          |   |          |   |          |
+       |             |   MSDU   |   |   MSDU   |   |   MSDU   |
+       |             |__________|   |__________|   |__________|
+       |                        \        \          / 
+      MAC           _____________\________\________/_
+       |           |            |      |      |      |
+       |           | Mac header | MSDU | MSDU | MSDU |  MPDU
+       |           |____________|______|______|______|
+       |           |                                 |
+       |           |<--------Max 7935 bytes--------->|
+       |
+     PLCP           _____________ _________________________________
+       |           |             |            |      |      |      |
+       |           | PLCP header | Mac header | MSDU | MSDU | MSDU |  PPDU
+       |           |_____________|____________|______|______|______|
+       |
+      PMD
+
+     A-MPDU Operation:
+	 
+     - If encryption enabled, then each MPDU is encrypted individually.
+     - The individual MPDU within an A-MPDU must all have same receiver address.
+     - The individual MPDU must all be of the same 802.11e QoS access category.
+     - A-MPDU also require the use of Block Ack.
+     - The Duration/ID fields in the MAC headers of all MPDUs in an A-MPDU carry the same value.
+     - All protected MPDUs within an A-MPDU have the same Key ID.
+
+     Below diagram show the A-MPDU Aggregation
+
+                         Max
+                      2304 Bytes
+     Layer 3          __________     __________     __________
+       |             |          |   |          |   |          |
+       |             |   MSDU   |   |   MSDU   |   |   MSDU   |
+       |             |__________|   |__________|   |__________|
+       |                          
+      MAC           ____________ ______    ____________ ______    ____________ ______ 
+       |           |            |      |  |            |      |  |            |      |
+       |           | Mac header | MSDU |  | Mac header | MSDU |  | Mac header | MSDU |  MPDU
+       |           |____________|______|  |____________|______|  |____________|______|
+       |           
+       |
+     PLCP           _____________ _______________________________________ ___________________
+       |           |             |            |      |            |      |            |      |
+       |           | PLCP header | Mac header | MSDU | Mac header | MSDU | Mac header | MSDU |  PPDU
+       |           |_____________|____________|______|____________|______|____________|______|
+       |           |                                                                         |
+      PMD          |<----------------------------Max 65535 Bytes---------------------------->|
+
+14.  Explain BlockAck Mechanism
+Ans: Please Refer https://github.com/gitforiview/Study/blob/master/Data/Wlan/Block-Ack.txt
+
+15.  Explain fragmentation and Defragmentation
+Ans: Fragmentation:
+     --------------
+     The process of partitioning an MSDU or an MMPDU into smaller MAC level frames,
+     MPDUs, is called fragmentation. The MAC may fragment and reassemble
+     individually addressed MSDUs or MMPDUs. The fragmentation and defragmentation
+     mechanisms allow for fragment retransmission.
+
+     The length of each fragment shall be an equal number of octets for all
+     fragments except the last, which may be smaller. The length of a fragment
+     shall never be larger than dot11FragmentationThreshold unless security
+     encapsulation is invoked for the MPDU. If security encapsulation is active
+     for the MPDU, then the MPDU shall be expanded by the encapsulation overhead
+     and this may result in a fragment larger than dot11FragmentationThreshold.
+
+     Under below conditions an MSDU not be fragmented even its length exceed the
+     fragmentation threshold.
+     1. An MSDU transmitted under HT-immediate or HT-delayed BlockAck agreement
+     2. An MSDU or MMPDU transmitted within an AMPDU.
+     3. Group addressed MSDUs or MMPDUs
+
+     If a fragment requires retransmission, its frame body content and length
+     shall remain fixed for the lifetime of the MSDU or MMPDU at that STA. Each
+     fragment shall contain a Sequence Control field, which is comprised of a
+     sequence number and fragment number. When a STA is transmitting an MSDU or
+     MMPDU, the sequence number shall remain the same for all fragments of that
+     MSDU or MMPDU.
+
+     The fragments shall be sent in order of lowest fragment number to highest
+     fragment number, where the fragment number value starts at 0, and increases
+     by 1 for each successive fragment. The Frame Control field also contains a bit,
+     the More Fragments bit, that is equal to 0 to indicate the last (or only) fragment
+     of the MSDU or MMPDU.
+
+     Below diagram (page 223 – CWAP Study Guide) shows a MSDU that has been fragmented
+     to 4 fragments.
+	 
+	                                     MSDU
+	             ___________________________________________________
+	            |            |            |            |            |
+	            |____________|____________|____________|____________|
+	            /    _______/ \        __/ \____       |\_________  \
+	           /    /          |      /         \      |          \  \__
+	      ____/____/____    ___|_____/____    ___\_____|___     ___\____\____ 
+	     |   |     |   |   |   |     |   |   |   |     |   |   |   |     |   |
+	     |MAC|Frame|CRC|   |MAC|Frame|CRC|   |MAC|Frame|CRC|   |MAC|Frame|CRC|
+	     |HDR|Body |   |   |HDR|Body |   |   |HDR|Body |   |   |HDR|Body |   |
+	     |___|_____|___|   |___|_____|___|   |___|_____|___|   |___|_____|___|
+	 
+     Defragmentation:
+     ----------------
+     Each fragment contains information to allow the complete MSDU or MMPDU to
+     be reassembled from its constituent fragments. The header of each fragment
+     contains the following information that is used by the destination STA to
+     reassemble the MSDU or MMPDU:
+      — Frame type
+      — Address of the sender, obtained from the Address2 field
+      — Destination address
+      — Sequence Control field: This field allows the destination STA to check
+	that all incoming fragments belong to the same MSDU or MMPDU, and the
+	sequence in which the fragments should be reassembled. The sequence
+	number within the Sequence Control field remains the same for all
+	fragments of an MSDU or MMPDU, while the fragment number within the
+	Sequence Control field increments for each fragment.
+      — More Fragments indicator: Indicates to the destination STA that this is
+	not the last fragment of the MSDU or MMPDU. Only the last or sole fragment
+	of the MSDU or MMPDU shall have this bit set to 0. All other fragments of
+	the MSDU or MMPDU shall have this bit set to 1.
