@@ -1,7 +1,7 @@
 Ques- How inline function works?
 Ans:  Inline Function are those function whose definitions are small and be
       substituted at the place where its function call is happened. Function
-	  substitution is totally compiler choice.
+      substitution is totally compiler choice.
 
       Example:
 	  #include <stdio.h>
