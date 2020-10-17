@@ -33,6 +33,17 @@ SoftIRQs:
   struct softirq_action {
   void (*action)(struct softirq_action *);
   };
+> The reason behind making softirq only as static is that we need to add the name
+  of softirq(say mysoftirq) to an enum in a file called "interrupt.h", and when the
+  compilation of code happens, a new instance of that particular enum(mysoftirq) is
+  created, which will be added to the softirq list as is marked as pending, which will
+  be processed by the do_irq() routine.
+  There is one more reason for not allowing this to be dynamically defined is that
+  most of the modules are dynamic drivers and if modules start using softirq, and
+  every softirq will use lock and for every driver there will be some interrupt,
+  so system will spend lots of time in the interrupt context. That's the reason
+  they(kernel guys) restricted it from using it freely. They wanted it to be used
+  by the developers who are desperate of CONCURRENT execution of bottom half.
 > Each registered softirq consumes one entry in the array. Consequently, there are
   registered softirqs.The number of registered softirqs is statically determined
   at compile time and cannot be changed dynamically.
