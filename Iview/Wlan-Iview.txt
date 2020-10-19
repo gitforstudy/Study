@@ -1118,3 +1118,127 @@ Ans: Fragmentation:
 	not the last fragment of the MSDU or MMPDU. Only the last or sole fragment
 	of the MSDU or MMPDU shall have this bit set to 0. All other fragments of
 	the MSDU or MMPDU shall have this bit set to 1.
+
+16.  Explain Power saving mechanism
+Ans: A wireless radio can perform one of the 4 activities. Power consumed by each
+     activity increases in the given order ( 1-4).
+     1. Asleep
+     2. Idle & awake
+     3. Receiving
+     4. Transmitting
+     
+     There are 3 methods of power management used in 802.11
+     1. 802.11 Power Management or legacy power save - Ps-poll Mechanism
+     2. Unscheduled Automatic Power Save Delivery (U-APSD) from 802.11e amendment
+     3. Power Save Multi-Poll (PSMP) from 802.11n amendment.
+     
+     Legacy Power Save – PS-POLL Mechanism:
+     --------------------------------------
+     The PS-POLL Mechanism is the Legacy Power save mechanism. The following article
+     tries to explain the same. As the name suggests PS-POLL stands for Power Save
+     Polling. The Access point uses the TIM information element to indicate to the
+     station that there is  unicast data buffered for the WLAN station at the Access
+     Point.
+     
+     The station wakes up at Listen Interval/DTIM time to receive the beacon from the
+     Access Point.
+     It then checks the TIM Information element to check whether its Association ID
+     is set in The TIM Information element.
+     If the Association ID of the Station is set – then it sends a specific frame to
+     retrieve data from the AP. This Frame is termed as a PS-Poll frame.
+     
+     The PS-Poll frame is a control frame and the frame format is given below from
+     the 802.11 standard.
+     
+     Octets:     2       2      6      6    4
+             __________________________________
+            | Frame   |     | BSSID |    |     |
+            | Control | AID | (RA)  | TA | FCS |
+            |_________|_____|_______|____|_____|
+            |                            |
+            |<--------Mac Header-------->|
+     	   
+     	             PS-Poll frame
+     
+     AID – Association ID of the station sending the PS-Poll frame to the Access Point
+           the two MSB bits of AID in a PS-Poll frame will be 1 (Duration ID field is
+	   used as AID field in PS-POLL)
+     BSSID – Basic Service Set Identifier
+     TA – Transmitter address of the station (Station MAC address)
+     FCS – Frame control sequence
+     
+     On receiving a PS-POLL frame from the 802.11 station, the AP would ACK the
+     PS-Poll frame and then sends a single data packet to the Station. If there
+     are more data packets queued for the 802.11 Station at the Access Point,
+     the Access Point sets the “More Data bit” in the frame control to true.
+     
+      B0    B1 B2  B3 B4     B7  B8    B9       B10       B11     B12     B13      B14      B15
+      ____________________________________________________________________________________________
+     |Payload | Type | Subtype | To | From | More      | Retry | Power | More | Protected | Order |
+     |Version |      |         | DS |  DS  | Fragments |       | Mgmt  | Data |   Frame   |       |
+     |________|______|_________|____|______|___________|_______|_______|______|___________|_______|
+         2       2        4       1     1        1         1       1       1        1         1
+     
+                                          Frame Control field
+     
+     The WLAN (802.11) station processes the received data frame and on processing
+     the frame control field realizes that it has more data queued at the Access point.
+     The WLAN (802.11) station will send another PS-Poll frame to retrieve another
+     data packet. When the “More Data bit” is set to zero – the Access Point has no more
+     data unbuffered for the WLAN station and the station can go to sleep.
+     
+     In legacy Power save devices, for transmitting each PS-Poll frame- the 802.11
+     station has to contend for the medium.
+     The PS-Poll frame transaction is provided pictorially below
+     
+     |Bcn with   Client contending              Data pkt        Client contending                   Data pkt
+     | TIM       for medium                     More data 1     for medium                          More data 0
+     |_____       /              _____          _____                |               _____           _____            
+     |     |     /              |     |        |     |               |              |     |         |     |           
+     |     |<------>|           | ACK |        |     |          |<------>|          | ACK |         |     |           
+     |_____|________|___________|_____|________|_____|__________|________|__________|_____|_________|_____|_____________
+     |              |     |SIFS       |        |      SIFS|     |        |     |SIFS      |         |      SIFS|     |
+     |              |     |           |<------>|          | ACK |        |     |          |<------->|          | ACK |
+     |              |_____|                \              |_____|        |_____|            AP contending      |_____|
+     |              Client Ps-poll          \                                               for medium   
+     |              Frame             AP contending                       Client Ps-poll
+     |                                for medium                          Frame         
+     |
+     
+     WMM Unscheduled Automatic Power Save Delivery (U-APSD):
+     -------------------------------------------------------
+     Unscheduled automatic Power Save delivery (U-APSD) is a mechanism which allows
+     an 802.11 station to wake up when the 802.11 station wants to wake up and ping
+     the Access Point to send buffered unicast data packets meant for it.
+     
+     The Power saving mechanism is good in cases such as VoWLAN connections wherein
+     a voice packet comes every few milliseconds or so. The U-APSD mechanism provides
+     two mechanisms to obtain the data buffered at the Access point.
+     They are
+      - Trigger enabled U-APSD mechanism
+      - Delivery enabled U-APSD mechanism
+      
+     The U-APSD support is provided in the QoS Info field in the QoS Capability
+     Information field sent in the association (re-association) request. This provides
+     an indication on whether the particular Access category supports U-APSD or not.
+     By setting a 1 in the particular bit – the access category would support both
+     delivery enabled and trigger enabled U-APSD mechanism.
+     
+     The U-APSD bit will be set by the Access Point to indicate the support of U-APSD
+     
+     A TSPEC (Transmit Specification) frame needs to be sent by the 802.11 station
+     separately if a particular Access Category has to be made exclusively delivery
+     enabled or Trigger enabled.
+     
+     The QoS Capability Element and the QoS information field is provided below for
+     an 802.11 station
+     
+              ________________________________
+             |            |        |          |
+             | Element ID | Length | QoS Info |
+             |____________|________|__________|
+     Octets:        1         1         1
+                QoS Capability element format
+     
+     
+     
