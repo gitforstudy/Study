@@ -15,9 +15,9 @@ Wlan:
 - Explain frame aggregation
 - Explain BlockAck Mechanism
 - Explain fragmentation and Defragmentation
+- Explain Power saving mechanism (Not yet completed)
 
 - QoS 11e/11n
-- power saving mechanism
 - frame format beacon, probe request/response, auth_seq1/auth_seq2 &
   association request/response
 - Difference in IEEE80211 standards a, b, g, n, ac, ax, ah
