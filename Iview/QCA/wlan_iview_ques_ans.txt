@@ -106,7 +106,7 @@ Ans: The basic idea behind demand paging is that when a process is swapped in, i
 8.   Page tables
 Ans: Page table has page table entries where each page table entry stores a frame number and optional status (like protection) bits. Many of status 
      bits used in the virtual memory system. The most important thing in PTE is frame Number.
-     The entries in the TLB are a limited resource. Far more mappings can be made than can exist in the TLB at one time.
+     The entries in the TLB(translation lookaside buffer) are a limited resource. Far more mappings can be made than can exist in the TLB at one time.
      The kernel must keep track of all of the mappings all of the time. The kernel stores all this information in the page tables.
      
                    |<-------------------------- optional --------------------->|
