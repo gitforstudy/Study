@@ -1,0 +1,182 @@
+Process Management:
+===================
+
+Process: A process is a program in execution. It represents the basic unit of work in a computer system. When you execute a program the operating system creates a process to manage the program's execution.
+
+Key Characteristics of a Process:
+---------------------------------
+1. Unique identifier : 
+		Each process is assigned a unique Process ID (PID) by the operating system.
+2. Separate Address Space: 
+		A process operates in its own memory space, ensuring isolation from other processes. This memory is divided into:
+		Code Segment: Contains executable code.
+    		Data Segment: Contains global and static variables.
+		Heap: For dynamically allocated memory.
+		Stack: For local variables and function call management.
+3. Attributes of a Process:
+		Stored in the process control block (PCB) i.e task_struct structure, which includes:
+		- PID (Process ID).
+		- Process State (Running, Sleeping, etc.).
+		- Parent
+		- Children
+		- Priority
+		- Program Counter (indicates the next instruction to execute).
+		- Open File Descriptors.
+4. Lifecycle Management:
+		Processes go through a lifecycle:
+
+		- Created: Process is being initialised.
+		- Ready: Process is waiting for CPU scheduling.
+		- Running: Process is executing on the CPU.
+		- Blocked: Waiting for I/O or a resource.
+		- Terminated: Execution is completed, but resources may still need to be reclaimed.
+
+Types of Processes:
+	- Foreground Process: Runs interactively with the user (e.g., a terminal command like ls).
+	- Background Process: Runs in the background without user interaction (e.g., a web server).
+	- Daemon Process: A special type of background process, usually started at boot time, to perform system-level tasks (e.g. sshd: handles SSH 
+	  connections).
+	- Orphan Process: A process whose parent process has terminated, but it is still running. Orphan processes are adopted by the init process (PID 1)
+	  or systemd.
+	- Zombie Process: A process that has completed execution but still has an entry in the process table because its parent has not read its exit status
+	  (via wait() system call). This will Appears in ps output with a status of Z (zombie).
+	- Interactive Process: A process initiated by the user that interacts directly with the user (via input and output). Ex: Vim
+	- Batch Process: A process that runs without user intervention, often scheduled for execution. Ex: Commands or scripts scheduled using cron or at.
+	- Init/System Process: The first process started by the kernel, responsible for bringing the system up and managing system-level processes. 
+	  Ex: init (traditional Unix systems), systemd (modern Linux systems).
+
+How Processes are Created:
+	In Linux, processes are typically created using system calls:
+	- fork(): Creates a copy of the current process (parent process). The new process is the child process.
+	- exec(): Replaces the process's memory space with a new program.
+
+	Some System calls used in processes:
+	- wait(): Parent process waits for a child process to complete.
+	- exit(): Terminates the process and releases its resources.
+
+Thread:
+-------
+A thread is the smallest unit of execution within a process. It represents a single sequence of instructions that can be executed independently. Every process has at least one thread, called the main thread, but it can create multiple threads to perform concurrent tasks.
+
+Key Characteristics of Threads:
+-------------------------------
+1. Shared Resources:
+	- Threads of the same process share:
+		- Memory (heap, global variables, etc.).
+		- File descriptors.
+		- Code and data sections.
+	- Each thread has its own:
+		- Stack (local variables, function calls).
+		- Program counter (to track the execution sequence).
+		- Registers.
+2. Lightweight:
+	- Threads are lightweight compared to processes because creating and managing threads require fewer resources than processes.
+3. Communication:
+	- Threads communicate more efficiently than processes because they share the same memory space.
+4. Concurrency:
+	- Threads enable concurrent execution of tasks within a process.
+
+
+How Threads Differ from Processes:
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+Aspect					Thread						Process
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+Definition		A single execution path within a process.		An independent program in execution.
+
+Memory			Shares memory and resources with other threads 		Has its own separate memory space.
+			in the same process.
+
+Creation		Lightweight; faster to create.				Heavier; slower to create.
+
+Context Switching	Faster because threads share memory.			Slower due to separate memory spaces.
+
+Communication		Easier (through shared memory).				More complex (requires IPC mechanisms like pipes or message queues).
+
+Failure Impact		A thread crash can affect the whole process.		A process crash doesn't impact other processes.
+
+Independence		Depends on the parent process.				Fully independent.
+
+Overhead		Less overhead (e.g., lower CPU and memory usage).	Higher overhead.
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Synchronisation in Processes:
+
+Synchronization in processes refers to coordinating the execution of multiple processes to ensure that they operate correctly and avoid conflicts when accessing shared resources. This is particularly important in scenarios where processes interact or share data, such as in multithreading or multiprocessing environments.
+
+Key Problems Addressed by Synchronization:
+
+1. Race Conditions: Occur when multiple processes access and manipulate shared data simultaneously, leading to unpredictable results.
+2. Data Consistency: Ensures that shared data remains consistent across processes, even under concurrent modifications.
+3. Deadlocks: Prevent processes from getting stuck in a state where they are waiting for resources held by each other indefinitely.
+4, Resource Sharing: Ensures proper allocation and usage of resources among processes.
+
+Mechanisms for Synchronisation:
+
+1. Mutual Exclusion (Mutex): 
+	- Purpose: Ensures that only one thread/process accesses the critical section at a time.
+	- How It Works: Mutexes provide a locking mechanism. A thread must acquire the lock before entering the critical section and release it after
+	  exiting. Example will be below.
+	- APIs: pthread_mutex_lock(pthread_mutex_t *lock)
+		pthread_mutex_unlock(pthread_mutex_t *lock)
+		int pthread_mutex_init(pthread_mutex_t *mutex, const pthread_mutexattr_t *attr);
+		int pthread_create(pthread_t *restrict thread, const pthread_attr_t *restrict attr, void *(*start_routine)(void *), void *restrict arg);
+		int pthread_join(pthread_t thread, void **retval);
+		int pthread_mutex_destroy(pthread_mutex_t *mutex);
+
+2. Semaphores: 
+	- Purpose: A synchronisation tool that can manage access to resources by multiple threads.
+	- Types:
+		- Binary Semaphore: Similar to a mutex (values 0 or 1).
+		- Counting Semaphore: Allows a fixed number of threads to access the resource.
+	-APIs: 
+		int sem_init(sem_t *sem, int pshared, unsigned int value);
+		int sem_wait(sem_t *sem); // Acquire semaphore
+		int sem_post(sem_t *sem); // Release semaphore
+		int sem_destroy(sem_t *sem);
+
+Critical section:
+-----------------
+A critical section is a segment of code in a program where shared resources (e.g., variables, data structures, hardware devices) are accessed. If multiple threads or processes access the critical section simultaneously without proper synchronization, it can lead to data inconsistency or race conditions.
+
+Real-Life Example of a Critical Section: 
+1. Amount Transaction
+2. Printer Queue
+
+Inter-Process Communication (IPC) Mechanism:
+--------------------------------------------
+
+
+
+
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
