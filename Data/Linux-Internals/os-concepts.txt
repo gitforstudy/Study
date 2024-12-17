@@ -145,6 +145,146 @@ Real-Life Example of a Critical Section:
 
 Inter-Process Communication (IPC) Mechanism:
 --------------------------------------------
+Inter-Process Communication (IPC) is the mechanism by which processes in Linux (or any operating system) communicate with each other to share data or coordinate their activities. 
+
+1. Pipes: 
+   Definition: 	Pipes are a unidirectional communication mechanism that allows data to flow from one process to another in a 
+   	       	producer-consumer fashion.
+   Types:
+    		Anonymous Pipes: Created using the pipe() system call and are used between parent and child processes.
+    		Named Pipes (FIFOs): Can be used between unrelated processes and are created using the mkfifo command or mkfifo() function.
+   Key Features:
+		Data flows in a first-in-first-out (FIFO) order.
+ 		Block on read if the pipe is empty, and block on write if the pipe is full.
+   APIs:
+		pipe(int fildes[2]);  // Create pipe
+		int mkfifo(const char *pathname, mode_t mode);
+
+2. Message Queues:
+   Definition: Message queues allow processes to exchange messages in a structured format.
+   Key Features:
+    		Messages are sent to and received from a queue.
+    		Messages have priorities; higher-priority messages are retrieved first.
+    		Created and managed using the msgget, msgsnd, msgrcv and msgctl system calls.
+
+3. Shared Memory: 
+   Definition: Shared memory allows multiple processes to access a common memory segment.
+   Key Features:
+    		Fastest form of IPC as data does not need to be copied between processes.
+    		Requires synchronization (e.g., semaphores) to avoid data corruption.
+   APIs:
+    	shmget: Allocates shared memory.
+    	shmat: 	Attaches the shared memory segment to a process's address space.
+    	shmdt: 	Detaches the shared memory segment.
+    	shmctl: Controls shared memory operations.
+
+4. Semaphores:
+   Definition: 	Semaphores are synchronization primitives used to control access to a shared resource.
+   Types:
+		Binary Semaphore: Works like a mutex (lock/unlock).
+		Counting Semaphore: Tracks the number of available resources.
+   Key Features:
+		semget, semop, and semctl system calls are used to manage semaphores.
+		Often used with shared memory for synchronization.
+
+5. Signals:
+   Definition: 	Signals are software interrupts sent to a process to notify it of an event.
+   Key Features:
+		Handled using signal handlers (signal or sigaction).
+    		Can interrupt or terminate processes or execute custom code in the handler.
+
+6. Sockets:
+   Definition: 	Sockets allow communication between processes over a network or locally using the loopback interface.
+   Types:
+		Stream Sockets (TCP): Reliable, connection-oriented.
+    		Datagram Sockets (UDP): Unreliable, connectionless.
+   
+Misc question:
+--------------
+- how does a process attach to shared memory internally ?
+  The process of attaching to shared memory involves the following key steps:
+	1. Creating or Accessing Shared Memory: 
+		Shared memory is created or accessed using shmget(), which allocates a shared memory segment.
+	   	This segment is identified by a unique key (IPC key).
+	   	
+		System Call: int shm_id = shmget(key, size, shmflg);
+	   			key: Unique identifier for the shared memory segment.
+				size: Size of the shared memory segment.
+				shmflg: Flags to specify permissions (e.g., read/write).
+				Returns a shared memory identifier (shm_id).
+		Ex:	     shm_id = shmget(shm_key, 1024, 0666 | IPC_CREAT);
+
+	2. Attaching to Shared Memory:
+		A process attaches to the shared memory using shmat(), which maps the shared memory segment to
+		the process's address space.
+		The kernel updates the process's page table to include the shared memory region.
+
+    		System Call: void *shmat(int shmid, const void *shmaddr, int shmflg);
+				shm_id : Shared memory identifier obtained from shmget().
+				shmaddr: The address at which the segment is mapped is determined by the shmaddr parameter. If it is equal
+					 to 0, kernel decide the address where the segment is attached.
+				shmflg : if 0, Specifies default read/write access.
+		Ex:		char *shm_ptr = (char *)shmat(shm_id, NULL, 0);
+
+	3. Internals of shmat():
+	    	The kernel checks the shm_id to find the corresponding shared memory segment.
+    		The segment's metadata (stored in kernel space) is updated with the process's details.
+    		The kernel assigns a virtual address in the process's address space and updates the page tables accordingly.
+    		This virtual address points to the physical memory of the shared memory segment.
+
+	4. Using Shared Memory:
+		Once attached, the process can directly read from or write to the shared memory as if it were part of its local memory.
+    		The kernel ensures that changes made by one process are visible to others.
+
+	5. Detaching from Shared Memory
+    		When a process no longer needs access to the shared memory, it can detach using shmdt().
+		
+		System Call: int result = shmdt(shm_ptr);
+		The kernel removes the mapping of the shared memory segment from the process's address space.
+		The shared memory remains allocated until all processes detach and it is explicitly removed.
+
+	6. Deleting Shared Memory
+		The shared memory segment can be deleted using shmctl() with the IPC_RMID command.
+
+    		System Call: shmctl(shm_id, IPC_RMID, NULL);
+		The segment is marked for deletion. It will be removed once all processes have detached from it.
+
+	7.Internal Kernel Mechanism
+		Shared Memory Metadata:
+        	The kernel maintains metadata for shared memory segments, such as segment ID, size, permissions, and attached processes.
+
+    		Memory Mapping:
+        	When a process attaches to shared memory, the kernel maps the physical memory associated with the shared segment into the
+		virtual address space of the process.
+
+	8.Synchronization:
+        	If multiple processes access the same shared memory, synchronization mechanisms like semaphores or mutexes are often used
+		to prevent race conditions.
+
+	9.Page Tables:
+        	The kernel updates the process's page tables to include entries for the shared memory. These entries map the shared virtual 
+		memory to the physical memory of the segment.
+
+
+			+----------------+          +----------------+
+			|   Process 1    |          |   Process 2    |
+			|                |          |                |
+			| +----------+   |          |   +----------+ |
+			| | Virtual  |   |          |   | Virtual  | |
+			| | Mapping  |   |          |   | Mapping  | |
+			| +----------+   |          |   +----------+ |
+			|      |         |          |        |       |
+			+------|---------+          +--------|-------+
+			       |                             |
+			       +------------+----------------+
+			                    |
+			             +-------------+
+			             | Shared Memory| (Kernel Space)
+			             +-------------+
+			                    |
+			             +-------------+
+			             |  Semaphore   |
+			             +-------------+
 
 
 
