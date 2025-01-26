@@ -1,0 +1,8 @@
+Modes of ARM (Ex. Interrupt mode)
+How system start booting, explain bootflow
+How secure your system is for any expernal binary if i install
+How driver initialised how device driver works
+Explain about spin lock
+In case 2 cpu trying to access critical section which is protected by spin lock, since both cpu tryiing to get access in same time, so both will get access how you will avoid this?
+Find the next grater number of same number of set bits. Ex given no. is 3 whihc has 2 set bits, next grater number will be 5.
+Write a string manipulation code for Input: prabhat, Output: rpbaaht
