@@ -1,148 +1,74 @@
-The Linux kernel device model:
-==============================
+Linux Device Driver:
+====================
+"A device driver is a software component that allows the operating system to communicate with hardware devices. It acts as an interface between the OS and hardware, enabling applications to use hardware without needing to understand its low-level details."
 
-Need for a device model
------------------------
-- For the same device, need to use the same device driver on multiple CPU
-  architectures (x86, ARM…), even though the hardware controllers are
-  different.
+Types of Device Drivers:
+------------------------
+- Character Device Driver : Deals with sequential data (e.g., keyboard, serial ports).
+- Block Device Driver     : Deals with data in blocks (e.g., hard drives, USB).
+- Network Device Driver   : Handles network interfaces (e.g., Ethernet, Wi-Fi).
 
-- Need for a single driver to support multiple devices of the same kind.
+For Linux, the /dev directory contains device files (e.g., /dev/sda, /dev/ttyS0).
 
-- This requires a clean organization of the code, with the device drivers
-  separated from the controller drivers, the hardware description separated
-  from the drivers themselves, etc.
+Role of a Device Driver:
+------------------------
+- Acts as a translator between hardware and the OS.
+- Sends and receives I/O requests from applications.
+- Handles interrupts and memory management for hardware.
 
-Driver: between bus infrastructure and framework:
--------------------------------------------------
-In Linux, a driver is always interfacing with:
-- a framework that allows the driver to expose the hardware features in a
-  generic way ex. netlink socket/IOCTL.
-- a bus infrastructure, part of the device model, to detect/communicate
-  with the hardware.
+Structure of a Device Driver in Linux:
+--------------------------------------
+"A Linux device driver is typically a kernel module that interacts with the hardware using system calls."
 
-Application                user application
--------------------------------------------
-    |
-System Call interface
-    |
-Framework
-    |
--------------------------------------------
-Driver                               Kernel
-    |
-Bus Insfrastructure
-    |
--------------------------------------------
-Hardware
-
-Device model data structures:
------------------------------
-The device model is organized around three main data structures:
-- struct bus_type: This structure represent one type of bus
-  (USB, PCI, I2C, etc.)
-- struct device_driver: This structure represents one driver capable of
-  handling certain devices on a certain bus.
-- struct device: This structure represents one device connected to a bus.
-
-The kernel uses inheritance to create more specialized versions of
-`struct device_driver` and `struct device` for each bus subsystem.
-
-The bus driver:
+Key Components:
 ---------------
-Example: USB. Implemented in drivers/usb/core/
-- Creates and registers the bus_type structure
-- Provides an API to register and implement adapter drivers
-  (here USB controllers), able to detect the connected devices and allowing to
-  communicate with them.
-- Provides an API to register and implement device drivers (here USB device
-  drivers)
-- Matches the device drivers against the devices detected by the
-  adapter drivers.
-- Defines driver and device specific structures, here mainly struct usb_driver
-  and struct usb_interface
+- File Operations (struct file_operations) : Defines functions like open, read, write, release.
+- Major & Minor Numbers 		   : Identify the driver (major) and specific device instance (minor).
+- Device Registration (register_chrdev())  : Registers the driver with the OS.
+- Interrupt Handling 			   : Used for event-driven communication.
+- Kernel Space vs User Space 		   : Device drivers run in kernel space, while applications run in user space.
 
-USB bus example:
-----------------
-/* Block diagram */
-A single driver for compatible devices, though connected to buses with
-different controllers.
 
-Steps to follow for writing device driver:
-1. Need to register supported devices to the bus core.
+Basic Workflow of a Character Device Driver:
+--------------------------------------------
+			User app [ read() /dev/ttyS0 ]
+			FS file /dev/ttyS0
+User space		Syscall read()
+				|
+				| FS syscall are handled by virtual file system
+				| kernel framework
+--------------------------------|------------------------------------------
+				|
+				|
+			Virtual filesystem
+			Handle call on the file node
+			call .read of the associated struct file_operations
+				|
+				| Calling associated function which was set during
+Kernel space			| char driver registration procedure.
+				|
+			char device driver
+			tty/serial/serial_core.c
+			.seq_read()
+			8250 UART driver
+---------------------------------------------------------------------------
+			UART IC
+Hardware		(Part of the chipset)
 
-Ex: drivers/net/usb/rtl8150.c
-	static struct usb_device_id rtl8150_table[] = {
-    	{ USB_DEVICE(VENDOR_ID_REALTEK, PRODUCT_ID_RTL8150) },
-    	{ USB_DEVICE(VENDOR_ID_MELCO, PRODUCT_ID_LUAKTX) },
-    	{ USB_DEVICE(VENDOR_ID_MICRONET, PRODUCT_ID_SP128AR) },
-    	{ USB_DEVICE(VENDOR_ID_LONGSHINE, PRODUCT_ID_LCS8138TX) },
-		{[…]},
-	};
-MODULE_DEVICE_TABLE(usb, rtl8150_table);
+---------------------------------------------------------------------------
 
-2. Need to register hooks to manage devices (newly detected or removed ones),
-   as well as to react to power management events (suspend and resume).
+	
 
-	static struct usb_driver rtl8150_driver = {
-		.name = "rtl8150",
-		.probe = rtl8150_probe,
-		.disconnect = rtl8150_disconnect,
-		.id_table = rtl8150_table,
-		.suspend = rtl8150_suspend,
-		.resume = rtl8150_resume
-	};
+Steps in Creating a Character Device Driver:
+--------------------------------------------
+1. Register the Driver (allocating major/minor number).
+2. Implement File Operations (open, read, write, release).
+3. Handle Hardware Communication (I/O operations).
+4. Test with a User-Space Application.
 
-3. The last step is to register the driver structure to the bus core.
 
-	static int __init usb_rtl8150_init(void)
-	{
-    	return usb_register(&rtl8150_driver);
-	}
-
-	static void __exit usb_rtl8150_exit(void)
-	{
-    	usb_deregister(&rtl8150_driver);
-	}
-
-	module_init(usb_rtl8150_init);
-	module_exit(usb_rtl8150_exit);
-
-Now the bus driver knows the association between the devices and the
-device driver
-
-Note: this code has now been replaced by a shorter module_usb_driver() macro.
-
-Work in the probe() function:
------------------------------
-probe() is called for each newly matched device
-- Initialize the device
-- Prepare driver work: allocate a structure for a suitable framework,
-  allocate memory, map I/O memory, register interrupts…
-- When everything is ready, register the new device to the framework.
-
-At driver loading time:
------------------------
-- The USB adapter driver that corresponds to the USB controller registers
-  itself to the USB core
-- The rtl8150 USB device driver registers itself to the USB core
-- The USB core now knows the association between the vendor/product IDs of
-  rtl8150 and the struct usb_driver structure of this driver
-
-/* Block Diagram */
-
-When a device is detected:
---------------------------
-
-/* Block Diagram */
-
-The model is recursive:
------------------------
-/* Block Diagram */
-Adapter drivers are device drivers too!
-
-Platform devices and drivers:
------------------------------
+Network Driver:
+---------------
 
 
 
@@ -154,4 +80,5 @@ Platform devices and drivers:
 
 
 
-Reference: https://bootlin.com/pub/conferences/2018/elc/opdenacker-kernel-programming-device-model-i2c/kernel-programming-device-model-i2c.pdf
+
+Reference: https://olegkutkov.me/2018/03/14/simple-linux-character-device-driver/
