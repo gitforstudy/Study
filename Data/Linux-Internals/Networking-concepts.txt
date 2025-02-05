@@ -1,0 +1,85 @@
+Networking Basics:
+==================
+
+OSI Model (7 Layers):
+---------------------
+--------------------------------------------------------------------------------------
+Layer			Function				Protocols
+--------------------------------------------------------------------------------------
+7. Application		User interaction			HTTP, FTP, DNS, SMTP
+6. Presentation		Data formatting, encryption		SSL/TLS, ASCII, JPEG
+5. Session		Session management			NetBIOS, RPC
+4. Transport		Reliable/unreliable data delivery	TCP, UDP
+3. Network		Routing, IP addressing			IP, ICMP, ARP
+2. Data Link		MAC addressing, frame delivery		Ethernet, PPP
+1. Physical		Physical medium				Fiber, Copper, Wi-Fi
+--------------------------------------------------------------------------------------
+
+TCP/IP Model (4 Layers):
+------------------------
+Application Layer       → HTTP, FTP, SMTP, DNS
+Transport Layer         → TCP, UDP
+Internet Layer          → IP, ICMP, ARP
+Network Interface Layer → Ethernet, Wi-Fi
+
+TCP vs UDP:
+-----------
+--------------------------------------------------------------------------------------
+Feature			TCP				UDP
+--------------------------------------------------------------------------------------
+Connection Type		Connection-oriented		Connectionless
+Reliability		Reliable (ACK, retransmission)	Unreliable
+Flow Control		Yes (Sliding Window)		No
+Use Cases		HTTP, FTP, SSH			DNS, VoIP, Video Streaming
+--------------------------------------------------------------------------------------
+
+IP Addressing & Subnetting:
+---------------------------
+Classes:
+
+    Class A → 0.0.0.0   – 127.255.255.255
+    Class B → 128.0.0.0 – 191.255.255.255
+    Class C → 192.0.0.0 – 223.255.255.255
+    Class D → Multicast
+    Class E → Reserved
+
+CIDR Notation (Subnet Mask)
+
+    /8 → 255.0.0.0
+    /16 → 255.255.0.0
+    /24 → 255.255.255.0
+
+DNS, DHCP & Firewall:
+---------------------
+DNS (Domain Name System)
+
+    Resolves domain names to IPs.
+    Uses UDP on port 53.
+
+DHCP (Dynamic Host Configuration Protocol)
+
+    Assigns IP addresses automatically.
+    Uses DORA Process: Discover → Offer → Request → Acknowledge.
+
+Firewall
+
+    Blocks or allows network traffic.
+    Types:
+        Packet Filtering Firewall → Works at Layer 3.
+        Stateful Firewall → Tracks connection state.
+
+
+
+
+
+
+
+
+
+Why TCP/IP has 4 layers while OSI has 7
+Why DNS uses UDP instead of TCP
+Difference between private and public IP
+What is subnetting and why is it used?
+How many hosts in a /24 network?
+ARP, RARP, and ICMP
+How DHCP works
