@@ -4,9 +4,9 @@ Linux Device Driver:
 
 Types of Device Drivers:
 ------------------------
-- Character Device Driver : Deals with sequential data (e.g., keyboard, serial ports).
-- Block Device Driver     : Deals with data in blocks (e.g., hard drives, USB).
-- Network Device Driver   : Handles network interfaces (e.g., Ethernet, Wi-Fi).
+- Character Device Driver → Deals with sequential data (e.g., keyboard, serial ports).
+- Block Device Driver     → Deals with data in blocks (e.g., hard drives, USB).
+- Network Device Driver   → Handles network interfaces (e.g., Ethernet, Wi-Fi).
 
 For Linux, the /dev directory contains device files (e.g., /dev/sda, /dev/ttyS0).
 
@@ -22,11 +22,11 @@ Structure of a Device Driver in Linux:
 
 Key Components:
 ---------------
-- File Operations (struct file_operations) : Defines functions like open, read, write, release.
-- Major & Minor Numbers 		   : Identify the driver (major) and specific device instance (minor).
-- Device Registration (register_chrdev())  : Registers the driver with the OS.
-- Interrupt Handling 			   : Used for event-driven communication.
-- Kernel Space vs User Space 		   : Device drivers run in kernel space, while applications run in user space.
+- File Operations (struct file_operations) → Defines functions like open, read, write, release.
+- Major & Minor Numbers 		   → Identify the driver (major) and specific device instance (minor).
+- Device Registration (register_chrdev())  → Registers the driver with the OS.
+- Interrupt Handling 			   → Used for event-driven communication.
+- Kernel Space vs User Space 		   → Device drivers run in kernel space, while applications run in user space.
 
 
 Basic Workflow of a Character Device Driver:
@@ -67,8 +67,125 @@ Steps in Creating a Character Device Driver:
 4. Test with a User-Space Application.
 
 
+
+
+
 Network Driver:
+===============
+
+A network driver is a kernel module that enables communication between the operating system and network hardware (such as an Ethernet or Wi-Fi card). It handles packet transmission, reception, and device control via the kernel networking stack.
+
+Key Concepts for Network Driver:
+--------------------------------
+a. Network Stack Overview
+
+    Application Layer → Uses sockets (e.g., HTTP, SSH)
+    Transport Layer   → TCP/UDP handling
+    Network Layer     → IP processing
+    Data Link Layer   → Ethernet, ARP
+    Physical Layer    → Network hardware (NIC)
+
+b. Important Kernel Structures
+
+    struct net_device    → Represents a network interface.
+    struct napi_struct   → Manages polling for high-performance packet handling.
+    struct sk_buff (skb) → Used for storing and processing packets.
+
+c. Key Network Driver Functions
+
+    ndo_open        → Called when the interface is brought up.
+    ndo_stop        → Called when the interface is brought down.
+    ndo_start_xmit  → Transmits packets.
+    ndo_get_stats64 → Retrieves network statistics.
+
+
+Summary of Network Driver Role:
+-------------------------------
+-------------------------------------------------------------------------------------
+Stage			Transmission (TX)		Reception (RX)
+-------------------------------------------------------------------------------------
+Application		send() -> Socket		recv() -> Read socket
+Transport Layer		TCP/UDP Segmentation		TCP/UDP Reassembly
+IP Layer		Adds IP headers			Checks IP headers
+NIC Driver		ndo_start_xmit() -> DMA		IRQ -> napi_poll()
+NIC Hardware		Converts data to signals	Converts signals to packets
+-------------------------------------------------------------------------------------
+
+→ How does a network driver interact with the Linux TCP/IP stack?
+	A network driver implements ndo_start_xmit() to transmit packets and napi_poll() to receive them.
+	It works with DMA, Interrupts, and NAPI to interface with the NIC.
+
+→ What is skb_buff and how does it work?
+	struct sk_buff is the data structure used by the kernel for storing and processing network packets.
+
+→ What is NAPI and why is it used?
+	NAPI (New API) is a polling mechanism used by high-speed network drivers to reduce interrupt overhead.
+
+→ How does DMA help in network drivers?
+	DMA allows NICs to transfer packets directly to RAM without CPU involvement, improving performance.
+
+
+DMA (Direct Memory Access):
+---------------------------
+a. Why is DMA Needed?
+
+    In traditional I/O, the CPU is responsible for copying data between network card (NIC) and RAM.
+    This leads to high CPU usage and slow performance.
+    DMA (Direct Memory Access) allows NICs to transfer data directly to/from RAM without CPU intervention.
+    This significantly improves network throughput and efficiency.
+
+b. How DMA Works in Network Drivers?
+
+    Transmit (TX) Path (Sending Data)
+	The network driver informs the NIC about a packet ready in RAM.
+    	NIC fetches the packet from RAM using DMA.
+    	The NIC then transmits the packet over the network medium.
+
+    Receive (RX) Path (Receiving Data)
+	NIC receives a network packet.
+    	It places the packet in a pre-allocated DMA buffer in RAM.
+    	The NIC triggers an interrupt to notify the CPU.
+    	The driver processes the packet and passes it to the kernel stack.
+
+c. Key Benefits of DMA
+
+    Reduces CPU overhead (CPU doesn’t move data).
+    Faster packet processing (NIC accesses RAM directly).
+    Improves system performance, especially at high speeds (Gigabit, 10G, 40G networks).
+
+
+NAPI (New API):
 ---------------
+a. Why is NAPI Needed?
+
+    In older interrupt-driven network drivers, every incoming packet generated a hardware interrupt.
+    If packet rate is too high, the CPU spends most of its time handling interrupts instead of processing data.
+    Solution: Use polling instead of interrupts when needed → NAPI (New API for Network Drivers).
+
+b. How NAPI Works?
+
+    When a packet arrives, Initially, the NIC raises an interrupt. The driver disables further interrupts for that NIC.
+    The driver starts polling the NIC for more packets.
+    Once all packets are processed, If no more packets arrive for a while, interrupts are re-enabled.
+
+
+Summary:
+--------
+---------------------------------------------------------------------------------------------------------------------
+Feature			DMA						NAPI
+---------------------------------------------------------------------------------------------------------------------
+Purpose			Offload data transfer from CPU to NIC		Efficient packet processing
+How it works?		NIC moves packets to/from RAM without CPU	Uses polling instead of frequent interrupts
+Used in?		TX (send) & RX (receive)			RX (receive)
+Main Benefit		Faster data movement, lower CPU usage		Better performance, reduced CPU load
+---------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
 
 
 
