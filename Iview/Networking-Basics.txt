@@ -1,0 +1,330 @@
+Networking Basics:
+==================
+
+OSI Model (7 Layers):
+---------------------
+--------------------------------------------------------------------------------------
+Layer			Function				Protocols
+--------------------------------------------------------------------------------------
+7. Application		User interaction			HTTP, FTP, DNS, SMTP
+6. Presentation		Data formatting, encryption		SSL/TLS, ASCII, JPEG
+5. Session		Session management			NetBIOS, RPC
+4. Transport		Reliable/unreliable data delivery	TCP, UDP
+3. Network		Routing, IP addressing			IP, ICMP, ARP
+2. Data Link		MAC addressing, frame delivery		Ethernet, PPP
+1. Physical		Physical medium				Fiber, Copper, Wi-Fi
+--------------------------------------------------------------------------------------
+
+TCP/IP Model (4 Layers):
+------------------------
+Application Layer       → HTTP, FTP, SMTP, DNS
+Transport Layer         → TCP, UDP
+Internet Layer          → IP, ICMP, ARP
+Network Interface Layer → Ethernet, Wi-Fi
+
+TCP vs UDP:
+-----------
+--------------------------------------------------------------------------------------
+Feature			TCP				UDP
+--------------------------------------------------------------------------------------
+Connection Type		Connection-oriented		Connectionless
+Reliability		Reliable (ACK, retransmission)	Unreliable
+Flow Control		Yes (Sliding Window)		No
+Use Cases		HTTP, FTP, SSH			DNS, VoIP, Video Streaming
+--------------------------------------------------------------------------------------
+
+IP Addressing & Subnetting:
+---------------------------
+Classes:
+
+    Class A → 0.0.0.0   – 127.255.255.255
+    Class B → 128.0.0.0 – 191.255.255.255
+    Class C → 192.0.0.0 – 223.255.255.255
+    Class D → Multicast
+    Class E → Reserved
+
+CIDR Notation (Subnet Mask)
+
+    /8 → 255.0.0.0
+    /16 → 255.255.0.0
+    /24 → 255.255.255.0
+
+DNS, DHCP & Firewall:
+---------------------
+DNS (Domain Name System)
+
+    Resolves domain names to IPs.
+    Uses UDP on port 53.
+
+DHCP (Dynamic Host Configuration Protocol)
+
+    Assigns IP addresses automatically.
+    Uses DORA Process: Discover → Offer → Request → Acknowledge.
+
+Firewall
+
+    Blocks or allows network traffic.
+    Types:
+        Packet Filtering Firewall → Works at Layer 3.
+        Stateful Firewall → Tracks connection state.
+
+
+
+Ques: Why TCP/IP has 4 layers while OSI has 7 ?
+Ans : OSI is a theoretical model, while TCP/IP is a real-world, working model. OSI has 7 layers for conceptual clarity, while TCP/IP merges some layers for      
+      simplicity and efficiency.
+
+Ques: Why DNS uses UDP instead of TCP
+Ans : DNS uses UDP because it is faster, requires less overhead, and most queries are small. However, when response size exceeds 512 bytes, or for zone transfers, DNS switches to TCP for reliability.
+
+Ques: Difference between private and public IP ?
+Ans : A private IP is used inside a local network, is not routable on the internet, and is assigned by a router. A public IP is globally unique, assigned by 
+      an ISP, and used for internet communication. Private IPs use NAT to access the internet.
+
+Ques: What is subnetting and why is it used?
+Ans : Subnetting divides a large network into smaller subnets, improving efficiency, security, and performance. It prevents IP address wastage, reduces 
+      congestion, and simplifies network management. Subnet masks (like 255.255.255.128) define subnet boundaries.
+
+Ques: How many hosts in a /24 network?
+Ans : /24 subnet means the first 24 bits are used for the network portion, and the remaining 8 bits are used for the host portion.
+
+      Step-by-Step Calculation
+	Total number of host addresses = 2n2n, where n is the number of host bits.
+        A /24 subnet has 8 bits for hosts.
+        So, total IPs:
+        	28=256
+        	28=256
+    	Usable hosts = Total IPs - 2
+        1 address for Network ID (first address)
+        1 address for Broadcast (last address)
+        So, usable hosts:
+        	256−2=254
+     Any /24 subnet (e.g., 10.0.0.0/24, 172.16.5.0/24) has 254 usable IPs.
+
+Ques: Explain ARP, RARP, and ICMP.
+Ans : ARP (Address Resolution Protocol) :
+      What is ARP?
+	ARP is used to map an IP address to a MAC address in a local network (LAN).
+	It helps devices find the physical (MAC) address of another device when they only know its IP address.
+      How ARP Works?
+	A device wants to send data to 192.168.1.5 but only has the IP address.
+	It sends a broadcast ARP request: "Who has 192.168.1.5? Tell me your MAC address."
+	The device with IP 192.168.1.5 replies with its MAC address.
+	The sender caches the MAC address for future use.
+     Example ARP Command (Linux):
+	arp -a
+	Shows the ARP cache (list of known IP-to-MAC mappings).
+
+    RARP (Reverse Address Resolution Protocol):
+    What is RARP?
+	RARP is used by diskless devices to obtain an IP address when they only have their MAC address.
+    How RARP Works?
+	A diskless device boots up and knows only its MAC address.
+	It sends a RARP request: "I have MAC address AA:BB:CC:DD:EE:FF. What is my IP address?"
+	A RARP server (usually a DHCP server) replies with the IP address.
+
+   ICMP (Internet Control Message Protocol):
+   What is ICMP?
+	ICMP is used for network troubleshooting, error reporting, and diagnostics (ping, traceroute).
+	Works in the Network Layer (Layer 3).
+	Used by ping and traceroute commands.
+   Key ICMP Message Types:
+	ICMP Type	Message				Purpose
+	---------------------------------------------------------------------------------------------
+	   0		Echo Reply			Response to a ping
+	   3		Destination Unreachable		Host, network, or port is unreachable
+	   5		Redirect			Router tells host to use a different route
+	   8		Echo Request			Ping request
+	  11		Time Exceeded			TTL expired (used in traceroute)
+	---------------------------------------------------------------------------------------------
+   How ICMP Works?
+	ping google.com
+	Your computer sends an ICMP Echo Request.
+	Google's server replies with an ICMP Echo Reply.
+	If a router drops a packet, it sends an ICMP Destination Unreachable message.
+
+Ques: How ping works?
+Ans : ping (Packet Internet Groper) is a network utility used to test connectivity between two devices.
+      It works using ICMP (Internet Control Message Protocol) Echo Request and Echo Reply messages.
+      Used to check network status, latency, and packet loss.
+
+      How it works:
+	ping google.com
+	Your system resolves google.com to an IP address (e.g., 142.250.190.78).
+	Your system creates an ICMP Echo Request packet and sends it to Google’s server.
+	The packet contains:
+		Source IP → Your computer’s IP (192.168.1.10)
+		Destination IP → Google’s IP (142.250.190.78)
+		ICMP Type → 8 (Echo Request)
+		ICMP Sequence Number → Identifies each ping request
+		TTL (Time to Live) → Limits packet hops
+	The packet travels through multiple routers in the network.
+	Each router decreases the TTL value by 1.
+	If TTL reaches 0, the router sends an ICMP "Time Exceeded" message (this is how traceroute works).
+	Google’s server receives the ICMP Echo Request.
+	It replies with an ICMP Echo Reply packet:
+	Source IP → Google’s IP (142.250.190.78)
+	Destination IP → Your system’s IP (192.168.1.10)
+	ICMP Type → 0 (Echo Reply)
+	Same Sequence Number (to match request)
+	The packet returns through the same route (or sometimes a different route).
+	Your system calculates the Round-Trip Time (RTT).
+	Ping displays output like:
+		PING google.com (142.250.190.78): 56 data bytes
+		64 bytes from 142.250.190.78: icmp_seq=1 ttl=56 time=15.2 ms
+		64 bytes from 142.250.190.78: icmp_seq=2 ttl=56 time=14.8 ms
+		64 bytes from 142.250.190.78: icmp_seq=3 ttl=56 time=16.1 ms
+    What Happens If Ping Fails?
+	Request Timed Out: Destination is down, blocked by a firewall, or network issue
+	Destination Host Unreachable: No route to the destination
+	Packet Loss : Poor network connection or congestion
+
+Ques: How DHCP works
+Ans : DHCP (Dynamic Host Configuration Protocol) is used to automatically assign IP addresses, subnet masks, default gateways, and DNS servers to devices
+      in a network. Eliminates the need for manual IP configuration. Uses UDP ports 67 (server) and 68 (client).
+
+      Steps of DHCP (DORA Process)
+      DHCP works in 4 main steps called the DORA process (Discover, Offer, Request, Acknowledge).
+
+	Step 1: DHCP Discover (Client → Broadcast)
+	When a device (PC, phone) connects to a network, it does not have an IP address.
+	It sends a DHCP Discover packet to find a DHCP server.
+	Sent as a broadcast (255.255.255.255) on UDP port 67.
+	Packet contains:
+	    MAC address of the client
+	    DHCP request type (Discover)
+
+	Step 2: DHCP Offer (Server → Broadcast)
+	The DHCP server receives the request and offers an available IP.
+	Sent as a broadcast or unicast on UDP port 68.
+	Packet contains:
+	    Offered IP address
+	    Subnet Mask
+	    Default Gateway
+	    Lease Time
+	    DNS Server
+
+	Step 3: DHCP Request (Client → Broadcast)
+	The client sends a DHCP Request to accept the offered IP.
+	Sent as a broadcast to inform other DHCP servers that it accepted an offer.
+
+	Step 4: DHCP Acknowledge (Server → Unicast)
+	The DHCP server confirms the lease by sending a DHCP Acknowledge.
+	Sent as a unicast to the client.
+	Contains IP configuration details.
+	
+	What Happens After DHCP Assignment?
+	The client will keep the IP for the lease time (e.g., 1 day).
+	Before lease expires, the client renews the lease by sending a DHCP Request.
+	If no response, it sends a new DHCP Discover.
+
+	DHCP Lease Renewal Process:
+	50% of lease time	Client sends a DHCP Request to renew the lease.
+	87.5% of lease time	If no response, client sends DHCP Request to any DHCP server.
+	100% expired	Client starts the DORA process again.
+
+	DHCP Relay (For Different Networks):
+	If a DHCP server is on another subnet, a DHCP Relay Agent forwards requests.
+	Routers can act as DHCP relays.
+	Ex: Client (192.168.1.50) → Router (DHCP Relay) → DHCP Server (10.0.0.1).
+
+
+Ques: When I type google.com in web browser what will happen throughout the process of getting response
+Ans : When you type google.com in a browser and press Enter, several steps occur across Application Layer, Transport Layer, Network Layer, Data Link Layer, 
+      and Physical Layer, involving the browser, OS, network drivers, routers, and Google’s servers.
+
+      1. Browser Processing (Application Layer):
+	a. User Input: You type google.com and press Enter.
+	b. Check Browser Cache: The browser checks its DNS cache for google.com's IP. If found, it skips DNS lookup.
+	c. Check OS DNS Cache: If the browser doesn’t have the IP, it asks the OS.
+
+     2. DNS Resolution (Converting google.com to IP): If the cache doesn’t have the IP, the OS starts a DNS query.
+	a. Local DNS Resolver (Stub Resolver)
+	   - OS contacts a configured DNS server (e.g., 8.8.8.8 for Google DNS).
+	   - DNS uses UDP port 53 (or TCP if the response is large).
+	b. Recursive DNS Resolution
+	   - ISP’s DNS server checks its cache.
+	   - If the IP is not cached, it queries Root DNS servers.
+	   - Root DNS points to .com TLD servers.
+	   - TLD servers point to Google’s authoritative DNS.
+	   - Google’s DNS responds with the IP (e.g., 142.250.190.78).
+ 	   - The browser receives the IP and proceeds.
+
+    3. TCP Connection Establishment (Transport Layer): Now that the browser has the IP, it establishes a TCP connection using the 3-way handshake.
+	Three-Way Handshake : Uses TCP (Transmission Control Protocol) on port 443 (HTTPS).
+	  1. SYN (Client → Server): System sends a SYN packet to Google’s IP.
+	  2. SYN-ACK (Server → Client): Google replies with SYN-ACK.
+	  3. ACK (Client → Server): System sends an ACK, completing the handshake.
+
+    4. TLS Handshake (For HTTPS): 
+	Since Google uses HTTPS (port 443), a TLS handshake secures communication.
+	  1. Client Hello : Browser sends supported encryption algorithms.
+	  2. Server Hello : Google’s server responds with chosen encryption.
+	  3. Certificate Exchange & Key Generation : 
+		- Google sends an SSL certificate.
+		- Client verifies authenticity.
+		- Both parties generate a shared encryption key.
+	  4. Encrypted Data Transfer Begins : All future communication is encrypted.
+
+    5. HTTP Request (Application Layer): The browser sends an HTTP GET request over the secured TCP connection.
+
+    6. Network Stack Processing (Inside OS & Network Driver) : The HTTP request is converted into packets and passed down the network stack.
+	a. Inside OS Networking Stack
+	  1. HTTP Request → Passed to TCP Layer.
+	  2. TCP Layer : Breaks data into segments (MSS ~1460 bytes).
+			 Adds source/destination port (443 for HTTPS).
+	  3. IP Layer : Adds Source IP & Destination IP.
+			Performs Routing Decision.
+	  4. Data Link Layer (Ethernet/Wi-Fi) : ARP Resolves MAC Address if necessary.
+						Frame is sent to the NIC (Network Interface Card).
+	b. Inside Network Driver:
+	  1. NIC Driver Copies Packet to DMA (Direct Memory Access) Buffer.
+	  2. NIC Uses Interrupts to Notify CPU that Data is Ready.
+	  3. NIC Sends Packet Over Ethernet/Wi-Fi.
+
+    7. Router & Internet Transmission
+	1. Packet moves through routers, each decreasing the TTL (Time-To-Live).
+	2. Routers forward the packet using Google’s BGP Routes.
+	3. The final router sends the packet to Google’s server.
+
+    8. Google’s Server Processes Request
+	1. Google’s Load Balancer directs traffic to the best available server.
+	2. Google’s Web Server (NGINX, Apache, or custom) receives the request.
+	3. Google’s backend processes generate a response.
+
+    9. Server Sends HTTP Response : Google responds with an HTTP 200 OK and webpage data.
+
+    10. Browser Renders Web Page
+	1. HTML is Parsed : Browser builds DOM (Document Object Model).
+	2. CSS & JavaScript are Loaded : Additional requests are made for CSS, JS, images.
+	3. Final Rendering : Browser displays Google’s homepage.
+
+Summary:
+----------------------------------------------------------
+Step	Action
+----------------------------------------------------------
+1	User types google.com in the browser
+2	Browser checks DNS cache
+3	DNS lookup converts google.com → 142.250.190.78
+4	TCP 3-way handshake is established
+5	TLS handshake secures communication
+6	HTTP GET request is sent to Google
+7	OS & network driver process the packet
+8	Packet travels through routers to Google
+9	Google’s server processes the request
+10	HTTP 200 response is sent back
+11	Browser renders the webpage
+----------------------------------------------------------
+
+
+	
+
+
+
+
+
+
+
+
+
+
