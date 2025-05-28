@@ -1,0 +1,77 @@
+Round 1:
+1.Find Sum of digits of a string
+#include <stdio.h>
+#include <stdint.h>
+
+uint32_t sum_of_digits(const char *str) {
+    uint32_t sum = 0;
+    
+    // Loop through each character in the string
+    while (*str) {
+        // Check if the character is a digit
+        if (*str >= '0' && *str <= '9') {
+            sum += *str - '0';  // Convert character to integer and add to sum
+        } else {
+            printf("Invalid input format\n");
+            return 0;
+        }
+        str++;
+    }
+    
+    return sum;
+}
+
+int main() {
+    const char *input_str = "123456";
+    uint32_t sum = sum_of_digits(input_str);
+
+    printf("The sum of the digits in \"%s\" is: %u\n", input_str, sum);
+    return 0;
+}
+ 
+2.Function to convert binary to decimal
+#include <stdio.h>
+
+// Function to convert binary to decimal
+int binaryToDecimal(const char *binary) {
+    int decimal = 0;
+    int i = 0;
+
+    // Loop through each character of the binary string
+    while (binary[i] != '\0') {
+        decimal = decimal * 2 + (binary[i] - '0'); // Multiply by 2 and add the current bit
+        i++;
+    }
+
+    return decimal;
+}
+
+int main() {
+    char binary[32];
+
+    // Input binary number as string
+    printf("Enter a binary number: ");
+    scanf("%s", binary);
+
+    // Convert to decimal and print the result
+    int decimal = binaryToDecimal(binary);
+    printf("Decimal equivalent: %d\n", decimal);
+
+    return 0;
+}
+
+What is thread, difference b/n threads and processes.
+Shared memory(how does a process attach to shared memory internally)
+Critical section, mutex locks.
+Why sockets are used. 
+What is system call and how it works.
+Virtual memory concepts.
+
+Round 2:
+—---------
+Questions on Current Project
+What happens when we request service from Amazon(When we enter amazon.com in google what happens in background from getting ip to device(dhcp), dns resolution , arp, routing to tcp connection establishment and termination)
+Etherchannel
+How to avoid congestion
+IPV6
+Data structures used to implement route table from a given packet
