@@ -362,7 +362,95 @@ Step	Action
 ----------------------------------------------------------
 
 
+Ques: Explain TCP handshake, Sequence number, TCP sliding window, MTU, Fragmentation?
+Ans : 
+1. TCP 3-Way Handshake (Connection Establishment)
+	This process ensures both client and server are ready to transmit data and agree on initial sequence numbers (ISNs).
+	✅ Steps:
+	Step	Direction	Description
+	1. SYN	Client → Server	Client sends SYN with initial sequence number (ISN)
+	2. SYN-ACK	Server → Client	Server replies with SYN + ACK (acknowledging client's ISN, sending its own ISN)
+	3. ACK	Client → Server	Client sends ACK, confirming server's ISN
+	After this, the connection is established, and data can begin flowing.
+
+2. Sequence Numbers
+	Each byte of data in TCP is assigned a sequence number.
+    These help in:
+        - Ordering segments
+        - Detecting duplicates
+        - Handling retransmissions
+
+2. TCP Sliding Window (Flow Control)
+	This mechanism ensures efficient transmission without overwhelming the receiver.
+	- What is it?
+    	A sliding window is a range of sequence numbers the sender is allowed to send without receiving ACKs.
+    	The receiver advertises its available buffer size as the window size.
+
+	- How it works:
+    	Sender sends packets within the window.
+		Receiver sends ACKs for received packets and updates window.
+		Sender "slides" the window forward upon ACK reception.
+		Unacknowledged data stays in the buffer (for possible retransmission).
+
+	- Purpose:
+    	Prevents overflow at the receiver.
+    	Allows multiple packets to be "in flight" (pipelining).
+		Enables efficient throughput control.
+
+Example:
+	If receiver window = 4 KB, sender can send up to 4 KB worth of packets before waiting for ACKs.
+
+3. MTU (Maximum Transmission Unit)
+	What is MTU?
+    	Maximum size of a single packet/frame (in bytes) that can be transmitted on a network link (e.g., Ethernet).
+		Common MTU for Ethernet = 1500 bytes
+
+4. Fragmentation:
+	If IP packet > MTU, it will be fragmented (split into smaller packets), unless:
+    TCP MSS (Maximum Segment Size) is respected (TCP avoids fragmentation).
+    Or if Don't Fragment (DF) flag is set → packet is dropped instead.
+
+Ques: What is Congestion in Networking?
+Ans : Congestion in networking occurs when too much data traffic is sent into the network too quickly for it to handle, causing:
+		- Packet loss
+    	- Increased latency
+		- Retransmissions
+		- Reduced throughput
+	It’s like a traffic jam — when too many vehicles (packets) try to use a road (network), everything slows down or stops.
+
+Causes of Network Congestion:
+    - Too many packets at once (high traffic volume).
+    - Insufficient bandwidth.
+    - Buffer overflow at routers or switches.
+    - Poor routing or slow links.
+	- Simultaneous retransmissions due to timeouts.
+
+How to Avoid Congestion:
+	1. TCP Congestion Control Mechanisms built into TCP to adjust traffic dynamically.
+    	Slow Start: Start with small data rate, increase gradually.
+    	Congestion Avoidance: Once threshold is hit, increase rate linearly.
+    	Fast Retransmit and Recovery: Quickly detect and recover from packet loss without going back to slow start.
+
+	2. Flow Control
+	    Uses a receiver window (rwnd) to prevent sender from overwhelming receiver.
 	
+	3. Quality of Service (QoS)
+	    Prioritize important traffic (like VoIP) over less critical traffic.
+	    Implemented in routers/switches to control packet priority.
+	
+	4. Active Queue Management (AQM)
+	    Techniques like RED (Random Early Detection) proactively drop packets before buffer overflows.
+	
+	5. Load Balancing
+	    Distribute traffic across multiple paths or servers to reduce overload.
+	
+	6. Rate Limiting and Traffic Shaping
+	    Control the rate of traffic at the source or intermediate nodes.
+	
+	7. Increase Bandwidth
+	    If congestion is persistent and due to lack of capacity, upgrading links may be necessary.
+
+
 
 
 
