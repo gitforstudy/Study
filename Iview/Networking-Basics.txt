@@ -268,14 +268,14 @@ Ans : When you type google.com in a browser and press Enter, several steps occur
     5. HTTP Request (Application Layer): The browser sends an HTTP GET request over the secured TCP connection.
 
     6. Network Stack Processing (Inside OS & Network Driver) : The HTTP request is converted into packets and passed down the network stack.
-	a. Inside OS Networking Stack
-		1. HTTP Request → Passed to TCP Layer.
-		2. TCP Layer : Breaks data into segments (MSS ~1460 bytes).
-				 	   Adds source/destination port (443 for HTTPS).
-		3. IP Layer : Adds Source IP & Destination IP.
-					  Performs Routing Decision.
-		4. Data Link Layer (Ethernet/Wi-Fi) : ARP Resolves MAC Address if necessary.
-											  Frame is sent to the NIC (Network Interface Card).
+		a. Inside OS Networking Stack
+			1. HTTP Request → Passed to TCP Layer.
+			2. TCP Layer : Breaks data into segments (MSS ~1460 bytes).
+					 	   Adds source/destination port (443 for HTTPS).
+			3. IP Layer : Adds Source IP & Destination IP.
+						  Performs Routing Decision.
+			4. Data Link Layer (Ethernet/Wi-Fi) : ARP Resolves MAC Address if necessary.
+												  Frame is sent to the NIC (Network Interface Card).
 	b. Inside Network Driver:
 		1. NIC Driver Copies Packet to DMA (Direct Memory Access) Buffer.
 	  	2. NIC Uses Interrupts to Notify CPU that Data is Ready.
