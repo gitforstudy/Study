@@ -180,8 +180,48 @@ Used in?		TX (send) & RX (receive)			RX (receive)
 Main Benefit		Faster data movement, lower CPU usage		Better performance, reduced CPU load
 ---------------------------------------------------------------------------------------------------------------------
 
+Data flow summary:
+------------------
 
+📡  [1] Physical Layer (PHY)
+    - Converts analog signals to digital bits
+    - Interfaces with MAC via MII/RGMII etc.
 
+🔗  [2] MAC Layer (Ethernet/Wi-Fi)
+    - Checks destination MAC address
+    - Accepts valid packets, pushes to DMA
+
+💾  [3] DMA (Direct Memory Access)
+    - Writes packet to kernel memory ring buffer
+    - No CPU intervention required here
+
+🔔  [4] Interrupt (ISR)
+    - Triggered by NIC after DMA copy
+    - ISR disables IRQs and schedules NAPI
+
+🔄  [5] NAPI Polling (SoftIRQ)
+    - Polls RX ring for packets (up to budget)
+    - Creates `sk_buff` for each, disables IRQs
+
+📦  [6] sk_buff Allocation
+    - Wraps packet metadata and payload
+    - Passed to `netif_receive_skb()` for further processing
+
+🧷  [7] Data Link Layer (L2 - Ethernet)
+    - Verifies Ethernet header and Ethertype
+    - Forwards to IP layer if Ethertype is 0x0800
+
+🌐  [8] Network Layer (L3 - IP)
+    - Validates IP header, matches destination
+    - Calls protocol handler (TCP/UDP)
+
+🔌  [9] Transport Layer (L4 - TCP/UDP)
+    - TCP: Checks seq#, stores data, sends ACKs
+    - UDP: Simple delivery to matching port/socket
+
+📲  [10] Application Layer
+    - App uses `recv()` or `read()` to fetch data
+    - Kernel copies from sk_buff to user buffer
 
 
 
