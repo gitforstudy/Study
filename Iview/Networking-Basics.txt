@@ -230,74 +230,114 @@ Ans : DHCP (Dynamic Host Configuration Protocol) is used to automatically assign
 
 
 Ques: When I type google.com in web browser what will happen throughout the process of getting response
-Ans : When you type google.com in a browser and press Enter, several steps occur across Application Layer, Transport Layer, Network Layer, Data Link Layer, 
-      and Physical Layer, involving the browser, OS, network drivers, routers, and Google’s servers.
+Ans : When you type google.com in a browser and press Enter, several steps occur across Application Layer, Transport Layer, Network Layer, Data Link Layer, and Physical Layer, involving the browser, OS, network drivers, routers, and Google’s servers.
 
-      1. Browser Processing (Application Layer):
-	a. User Input: You type google.com and press Enter.
-	b. Check Browser Cache: The browser checks its DNS cache for google.com's IP. If found, it skips DNS lookup.
-	c. Check OS DNS Cache: If the browser doesn’t have the IP, it asks the OS.
+    1. Browser Processing (Application Layer):
+		a. User Input: You type google.com and press Enter.
+		b. Check Browser Cache: The browser checks its DNS cache for google.com's IP. If found, it skips DNS lookup.
+		c. Check OS DNS Cache: If the browser doesn’t have the IP, it asks the OS.
 
-     2. DNS Resolution (Converting google.com to IP): If the cache doesn’t have the IP, the OS starts a DNS query.
-	a. Local DNS Resolver (Stub Resolver)
-	   - OS contacts a configured DNS server (e.g., 8.8.8.8 for Google DNS).
-	   - DNS uses UDP port 53 (or TCP if the response is large).
-	b. Recursive DNS Resolution
-	   - ISP’s DNS server checks its cache.
-	   - If the IP is not cached, it queries Root DNS servers.
-	   - Root DNS points to .com TLD servers.
-	   - TLD servers point to Google’s authoritative DNS.
-	   - Google’s DNS responds with the IP (e.g., 142.250.190.78).
- 	   - The browser receives the IP and proceeds.
+	2. DNS Resolution (Converting google.com to IP): If the cache doesn’t have the IP, the OS starts a DNS query.
+		a. Local DNS Resolver (Stub Resolver)
+		   - OS contacts a configured DNS server (e.g., 8.8.8.8 for Google DNS).
+		   - DNS uses UDP port 53 (or TCP if the response is large).
+		b. Recursive DNS Resolution
+		   - ISP’s DNS server checks its cache.
+		   - If the IP is not cached, it queries Root DNS servers.
+		   - Root DNS points to .com TLD servers.
+		   - TLD servers point to Google’s authoritative DNS.
+		   - Google’s DNS responds with the IP (e.g., 142.250.190.78).
+	 	   - The browser receives the IP and proceeds.
 
     3. TCP Connection Establishment (Transport Layer): Now that the browser has the IP, it establishes a TCP connection using the 3-way handshake.
-	Three-Way Handshake : Uses TCP (Transmission Control Protocol) on port 443 (HTTPS).
-	  1. SYN (Client → Server): System sends a SYN packet to Google’s IP.
-	  2. SYN-ACK (Server → Client): Google replies with SYN-ACK.
-	  3. ACK (Client → Server): System sends an ACK, completing the handshake.
+		Three-Way Handshake : Uses TCP (Transmission Control Protocol) on port 443 (HTTPS).
+		  1. SYN (Client → Server): System sends a SYN packet to Google’s IP.
+		  2. SYN-ACK (Server → Client): Google replies with SYN-ACK.
+		  3. ACK (Client → Server): System sends an ACK, completing the handshake.
 
     4. TLS Handshake (For HTTPS): 
-	Since Google uses HTTPS (port 443), a TLS handshake secures communication.
-	  1. Client Hello : Browser sends supported encryption algorithms.
-	  2. Server Hello : Google’s server responds with chosen encryption.
-	  3. Certificate Exchange & Key Generation : 
-		- Google sends an SSL certificate.
-		- Client verifies authenticity.
-		- Both parties generate a shared encryption key.
-	  4. Encrypted Data Transfer Begins : All future communication is encrypted.
+		Since Google uses HTTPS (port 443), a TLS handshake secures communication.
+		  1. Client Hello : Browser sends supported encryption algorithms.
+		  2. Server Hello : Google’s server responds with chosen encryption.
+		  3. Certificate Exchange & Key Generation : 
+			- Google sends an SSL certificate.
+			- Client verifies authenticity.
+			- Both parties generate a shared encryption key.
+		  4. Encrypted Data Transfer Begins : All future communication is encrypted.
 
     5. HTTP Request (Application Layer): The browser sends an HTTP GET request over the secured TCP connection.
 
     6. Network Stack Processing (Inside OS & Network Driver) : The HTTP request is converted into packets and passed down the network stack.
 	a. Inside OS Networking Stack
-	  1. HTTP Request → Passed to TCP Layer.
-	  2. TCP Layer : Breaks data into segments (MSS ~1460 bytes).
-			 Adds source/destination port (443 for HTTPS).
-	  3. IP Layer : Adds Source IP & Destination IP.
-			Performs Routing Decision.
-	  4. Data Link Layer (Ethernet/Wi-Fi) : ARP Resolves MAC Address if necessary.
-						Frame is sent to the NIC (Network Interface Card).
+		1. HTTP Request → Passed to TCP Layer.
+		2. TCP Layer : Breaks data into segments (MSS ~1460 bytes).
+				 	   Adds source/destination port (443 for HTTPS).
+		3. IP Layer : Adds Source IP & Destination IP.
+					  Performs Routing Decision.
+		4. Data Link Layer (Ethernet/Wi-Fi) : ARP Resolves MAC Address if necessary.
+											  Frame is sent to the NIC (Network Interface Card).
 	b. Inside Network Driver:
-	  1. NIC Driver Copies Packet to DMA (Direct Memory Access) Buffer.
-	  2. NIC Uses Interrupts to Notify CPU that Data is Ready.
-	  3. NIC Sends Packet Over Ethernet/Wi-Fi.
+		1. NIC Driver Copies Packet to DMA (Direct Memory Access) Buffer.
+	  	2. NIC Uses Interrupts to Notify CPU that Data is Ready.
+	  	3. NIC Sends Packet Over Ethernet/Wi-Fi.
 
     7. Router & Internet Transmission
-	1. Packet moves through routers, each decreasing the TTL (Time-To-Live).
-	2. Routers forward the packet using Google’s BGP Routes.
-	3. The final router sends the packet to Google’s server.
+		1. Packet moves through routers, each decreasing the TTL (Time-To-Live).
+		2. Routers forward the packet using Google’s BGP Routes.
+		3. The final router sends the packet to Google’s server.
 
     8. Google’s Server Processes Request
-	1. Google’s Load Balancer directs traffic to the best available server.
-	2. Google’s Web Server (NGINX, Apache, or custom) receives the request.
-	3. Google’s backend processes generate a response.
+		1. Google’s Load Balancer directs traffic to the best available server.
+		2. Google’s Web Server (NGINX, Apache, or custom) receives the request.
+		3. Google’s backend processes generate a response.
 
     9. Server Sends HTTP Response : Google responds with an HTTP 200 OK and webpage data.
 
-    10. Browser Renders Web Page
-	1. HTML is Parsed : Browser builds DOM (Document Object Model).
-	2. CSS & JavaScript are Loaded : Additional requests are made for CSS, JS, images.
-	3. Final Rendering : Browser displays Google’s homepage.
+    10. Data received via Ethernet/Wi-Fi (Physical/Data Link Layer)
+		1. Data is received as electrical signals (Ethernet) or radio waves (Wi-Fi).
+	 	2. The Network Interface Card (NIC) converts it into digital form.
+		3. NIC hardware checks the MAC address in the Ethernet frame:
+			If it matches the device’s MAC (or is broadcast/multicast), it's accepted.
+            Otherwise, dropped at the hardware level.
+
+	11. NIC + DMA + Interrupts
+		NIC uses DMA (Direct Memory Access) to copy packet data to kernel memory (usually sk_buff buffer in Linux).
+		Once copied:
+        	- NIC triggers a hardware interrupt (IRQ).
+        	- Kernel's ISR (Interrupt Service Routine) is invoked.
+        	- ISR disables further interrupts from this device and schedules NAPI poll (softirq).
+
+	12. NAPI Polling (softirq) in Kernel
+		- NAPI pulls multiple packets from the NIC driver queue (reducing interrupt overhead).
+		- Each packet is wrapped into a sk_buff structure and passed into the network stack.
+
+	13. IP Layer (Network Layer)
+    	IP header is parsed:
+			- Source IP → Google's server
+    		- Destination IP → Client’s system
+        	- Protocol → TCP
+        		TTL, checksum, fragmentation details, etc.
+    			If destination IP matches the host, it's accepted and passed to TCP.
+
+	14. TCP Layer (Transport Layer)
+    	- TCP uses: Source port = 443 (Google)
+        - Destination port = [ephemeral client port opened during handshake]
+		- TCP checks:
+        	ACK numbers
+			Sequence numbers (to reassemble segments)
+    		Window size, retransmissions, etc.
+		- TCP copies payload (i.e., HTTP data) to user-space socket buffer for the browser process.
+
+	15. TLS Decryption
+    	- Browser/OS TLS engine decrypts the payload using the previously negotiated session key.
+    	- This is where encrypted HTTPS turns into readable HTTP content.
+
+	16. Application Layer (Browser)
+    	- Browser reads the decrypted HTTP response from the socket.
+    	- Starts parsing HTML.
+    	- Fetches CSS/JS/images, repeating this whole process for each additional request.
+		- Final Rendering : Browser displays Google’s homepage.
+
 
 Summary:
 ----------------------------------------------------------
@@ -313,7 +353,12 @@ Step	Action
 8	Packet travels through routers to Google
 9	Google’s server processes the request
 10	HTTP 200 response is sent back
-11	Browser renders the webpage
+11  NIC Hardware	Receives frame, verifies MAC, triggers DMA + IRQ
+12	NAPI (Softirq)	Pulls packet from NIC driver, wraps into sk_buff
+13 	IP Layer	Parses IP header, accepts if IP matches
+14	TCP Layer	Handles ACK, reassembly, flow control
+15	TLS Layer	Decrypts HTTPS data
+16	Browser App	Reads data from socket and renders
 ----------------------------------------------------------
 
 
