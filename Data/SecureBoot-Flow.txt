@@ -1,0 +1,108 @@
+Key Concepts in Secure Boot:
+----------------------------
+    Public/Private Key Pairs:
+        The manufacturer uses a private key to sign each boot stage binary (e.g., U-Boot, ATF).
+        The hardware contains a public key in secure storage (like fuses) used to verify the signature of each stage before it is executed.
+
+    Chain of Trust:
+        Every stage of the boot process is cryptographically verified by the previous stage to ensure integrity and authenticity.
+        This ensures that only trusted code is executed, preventing unauthorized code execution.
+
+    TrustZone and Secure World:
+        ARM TrustZone provides hardware-enforced separation between secure and non-secure worlds.
+        Secure boot ensures the secure world is initialized properly before handing control to the non-secure world (user OS).
+
+    Fuses and Hardware Storage:
+        Public keys are stored in secure hardware like One-Time Programmable (OTP) fuses or secure elements to prevent tampering.
+
+
+Overview of Secure Boot Flow:
+----------------------------
+    1. ROM Code (BL1 - Bootloader Stage 1):
+
+    Functionality:
+        - Hardware Initialization: After a power-on reset, the system starts executing the ROM code (hardcoded in a non-writable part of memory).
+        - Public Key Retrieval: The ROM code fetches the public key from secure hardware (e.g., fuses or One-Time Programmable (OTP) memory) to verify the
+	  integrity of the next stage.
+        - Signature Verification of BL2: ROM code verifies the cryptographic signature of BL2 (next stage) using the public key.
+    Outcome:
+        - If the signature verification passes, BL2 is loaded into memory and executed. If not, the system halts.
+
+    2. BL2 (Bootloader Stage 2):
+
+    Functionality:
+        - Loading Subsequent Stages: BL2’s primary role is to load and verify the next boot stages (BL31, BL32, and BL33).
+        - Cryptographic Signature Verification: It verifies each stage’s cryptographic signature to ensure that no tampered or
+	  unauthorized code is loaded.
+        - Secure Boot Certificate Chain: BL2 follows the certificate chain in the Trusted Board Boot Requirements (TBBR) system,
+	  ensuring every subsequent stage is signed by a trusted authority.
+
+    Stages Verified:
+        BL31 (Secure Monitor)
+        BL32 (Trusted OS) (optional, used when a Trusted Execution Environment is present, like OP-TEE).
+        BL33 (Non-Secure OS Loader), which loads the actual OS (like Linux).
+
+    Outcome: Once all stages are verified, BL31 (Secure Monitor) is executed.
+
+
+    3. BL31 (Secure Monitor - Exception Level 3 Runtime Software): 
+
+    Functionality:
+        - Secure/Non-Secure Transition: BL31 is responsible for setting up and managing the transition between the secure world
+	  (where sensitive functions run) and the non-secure world (general-purpose OS).
+        - Secure World Setup: It initializes TrustZone, memory protection, and secure peripherals for the Trusted OS (if present).
+        - Boots BL32 (Trusted OS): If a Trusted OS (like OP-TEE) is present, BL31 boots it into the secure world.
+        - Boots BL33 (Non-Secure Bootloader): BL31 also loads BL33 (e.g., U-Boot) into memory to eventually start the non-secure OS.
+    
+    Outcome: Secure monitor initializes and runs the secure world and prepares for non-secure execution.
+
+    4. BL32 (Trusted OS - OP-TEE) (Optional):
+
+    Functionality:
+        - Secure World Functions: BL32 runs in the secure world and provides security-critical functions like cryptographic operations,
+	  key management, and secure communication.
+        - Separation of Secure and Non-Secure Worlds: It leverages TrustZone to enforce separation between secure and non-secure resources.
+        - Trusted Applications: Any applications or services that need to run in a Trusted Execution Environment (TEE) will be executed by BL32.
+
+    Outcome: If BL32 is present, it runs securely alongside the non-secure OS (Linux or Android).
+
+    5. Non-Secure Boot (BL33 – U-Boot's Role):
+
+    Functionality:
+	- BL33 (U-Boot) is the non-secure bootloader that gets loaded after the initial secure boot stages (BL1/BL2/BL31). In the secure boot
+    	  environment, before U-Boot is executed, the previous stages will have verified that U-Boot itself is legitimate using cryptographic
+	  checks.
+    	- U-Boot is now responsible for starting the non-secure OS environment. This typically means preparing the hardware, loading boot 
+	  configuration files, and managing the handoff to a second-stage bootloader, like GRUB.
+	- U-Boot locates and loads GRUB, the second-stage bootloader, into memory.
+
+    6. GRUB Loading:
+
+    Functionality:
+    	- GRUB provides flexibility for multi-boot environments and advanced boot configuration (e.g., booting different kernels, recovery modes,
+	  etc.).
+    	- GRUB's configuration file (usually grub.cfg) defines how the system should boot, including which kernel to load and any additional
+	  parameters.
+	- If secure boot extends beyond GRUB, it may also verify the kernel's signature to ensure it's authentic and untampered.
+    	  After loading the kernel and the initial RAM disk (initrd), GRUB passes control to the kernel.
+
+    7. OS Kernel Loading:
+
+    Functionality:
+    	- OS kernel (e.g., Linux kernel) loaded into memory by GRUB.
+	- After GRUB has successfully loaded the kernel and passed control to it, the kernel initializes the OS, and the Linux boot process begins.
+	- At this point, OS (Linux, Android, etc.) takes full control of the hardware.
+
+    
+
+
+Boot Flow Summary:
+------------------
+    BL1 (ROM Code): Initializes hardware and verifies BL2.
+    BL2: Loads and verifies BL31, BL32, BL33.
+    BL31: Sets up secure monitor and manages secure/non-secure transitions.
+    BL32 (Optional): Trusted OS for secure world execution.
+    BL33: Non-secure bootloader (U-Boot), locates GRUB on the boot media, If secure boot is enabled, U-Boot verifies the GRUB binary's signature.
+    Grub: GRUB reads its configuration (grub.cfg), GRUB loads the OS kernel (e.g., Linux) into memory and may also load an
+	  initial RAM disk (initrd).
+    Kernel: The Linux kernel initializes and takes over the system.
