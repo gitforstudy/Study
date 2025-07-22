@@ -1,0 +1,105 @@
+Virtual Memory:
+===============
+Virtual memory also known as Demand paging, is a memory management technique where a process believes it has access to a large, contiguous block of memory, while in reality, only parts of it may reside in physical RAM. The rest may be stored on the disk (usually a swap file or paging file).
+This allows:
+- Running large programs on small RAM
+- Isolation between processes
+- Efficient memory use
+- Simplified programming
+
+Explanation:
+------------
+1. While Executing an Instruction:
+    - CPU generates a memory address (could be for read or write).
+    - This address is split into:
+    - Page Number
+    - Offset
+    - The Page Number is used to check the Page Map Table (PMT).
+
+2. From PMT, the system checks whether the page is in main memory (RAM).
+    - If Page is Available in RAM:
+    - Simply fetch the data from RAM.
+    - Execute the instruction.
+    - Move on to the next instruction.
+    - Normal flow continues.
+
+3. If Page is NOT Available in RAM:
+    - This causes a Page Fault.
+    - A Page Fault Interrupt is triggered.
+    - Now, the operating system (OS) must handle this fault.
+
+4. Steps to Handle Page Fault:
+    - Check if any free frame (block) is available in RAM.
+        If available → Use it to load the page.
+        If not available → A page needs to be replaced.
+    - Select a page to replace (using page replacement algorithms like FIFO, LRU, etc.).
+    - Update the PMT (Page Map Table) of the process whose page is being removed:
+        Mark it as not present.
+        Adjust the page’s status in the PMT (e.g., clear the valid bit).
+    - Check if the page being removed was modified:
+        If yes, write it back to disk (secondary storage).
+        If no, skip writing (already saved on disk).
+    - Get the disk address of the new page (from File Map Table or metadata).
+    - Load (read) the new page from disk into the selected frame in RAM.
+    - Update the PMT of the current process to reflect:
+        The new page is now in memory.
+        Its corresponding frame number.
+    - Resume the interrupted instruction:
+    - Restart execution from the point where the page fault occurred.
+    - Now that the required page is available in memory, the instruction can proceed normally.
+
+5. Then the CPU continues normal execution.
+
+
+                     Demand Paging / Virtual Memory Mgmt
+                              (Block Diagram)
+
+ ┌────────────┐      ┌─────────────┐       ┌────────────────┐
+ │ Logical    │      │ PMT         │       │ Physical       │
+ │ Address    │─────►│ Page Map    │──────►│ Memory         │
+ │ Space      │      │ Table       │  ▲    │ (No of Frames) │
+ └────────────┘      └─────────────┘  |    └────────────────┘
+        │                 ▲           |                   ▲
+        │                 │           |                   |
+        |                 │   PMT     |                   |
+        |             ┌───└─────┌─────┘──┐──────────┐     |
+        └────────────►│ Page No | Offset │ Intr bit │     |
+                      └─────────└────────┘──────────┘     |
+                      Logical addr = page no. + offset    |
+                                                          |
+                 File Map Table                           |
+                ┌───────────┐                             |
+                │   FMT     │─────────────────────────────┘  
+                └────┬──────┘
+                     │
+                     ▼
+                ┌───────────┐
+                │   Disk    │   (Secondary Storage)
+                └───────────┘
+
+=> Page Map Table (PMT) contains:
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+Bit/Field	                    Role
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+Valid Bit (V)	                Page memory me loaded hai ya nahi (agar nahi, to page fault/interrupt aayega)
+Frame Number	                Agar valid bit 1 hai, to ye us page ka physical memory me location batata hai
+Dirty Bit (D)	                Page modify hua ya nahi (write-back ke liye jaruri)
+Accessed Bit (A)	            Kab use hua tha (replacement algorithm me useful)
+Protection Bits	                Read/Write/Execute permission
+Interrupt/Page Fault Trigger 	Jab valid bit 0 hota hai, aur CPU us page ko access karta hai, to hardware interrupt trigger hota hai
+(Indirect)
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+=> Swap Space: 	Area on disk for temporarily holding non-active pages
+
+=> What is Thrashing?
+    When too many page faults happen repeatedly and the CPU spends more time swapping pages in/out than executing — this is called thrashing.
+    Causes:
+        RAM too small
+        Too many large processes
+        Poor page replacement policy
+    Solution:
+        Add more RAM
+        Reduce multiprogramming level
+        Use better page replacement algorithms
+
