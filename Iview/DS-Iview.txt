@@ -8,6 +8,30 @@ DS:
 - Find loop in a list
 - Stack and queues
 - Reverse the linkedlist
+- How do you delete a cycle in linkedlist.
+- Reverse specific part of linked list 1 based indexing
+    10->20->30->40->50->60->70->NULL
+    a = 3 and b = 6
+    Output: 10-20-60->50->40->30->70-NULL
+
+- Intersection point in Y shaped Linked lists Find the point where linked list intersect and remove it
+    1-2-3-4-5-6->NULL
+      7->8->NULL
+
+- Check palindrome of a linked list
+- Swap given two nodes in linked list
+- Given a singly linked list and an integer k, the task is to rotate the linked list to the right by k places
+- Remove duplicate elements from sorted linked list
+- How do you flatten a multilevel linked list?
+- Flattening a Linked List
+- Clone a linked list with random pointers
+- Given a Linked list of Os, 1s and 2s, sort it
+
+
+
+
+
+
 - Sorting
 - Tree
 
