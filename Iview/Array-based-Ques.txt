@@ -1,0 +1,59 @@
+1. Find the majority element in the array. If no majority exists, return -1. A majority element in an array is an element that appears strictly more than acc.size() / 2 times in the array.
+Input : aul = (1, 1, 2, 1, 3, 5, 1)
+Output : 1
+Explanation: Note that 1 appear 4 times which is more than 7 / 2 times
+
+2. The task is to move all the zeros to the end of the array while maintaining the relative order of all non-zero elements.
+Input: arr[] = [1, 2, 0, 4, 3, 0, 5, 0]
+Output: arr[] = [1, 2, 4, 3, 5, 0, 0, 0]
+Explanation: There are three Os that are moved to the end.
+
+3. You are given an array of Os and 1s in random order. Segregate Os on left side and 1s on right side of the array
+[Basically you have to sort the array].
+Inut: [0, 1, 0, 1, 0, 0, 1, 1, 1, 0]
+Output: [0, 0, 0, 0, 0, 1, 1, 1, 1, 1]
+Traverse array only once.
+
+4. Find out array has Subarray with 0 sum
+Input: (4, 2, -3, 1, 6)
+Output: true
+Explanation: There is a subarray with zero sum from index 1 to 3.
+
+Input: (4, 2, 0, 1, 6)
+Output: true
+Explanation: The third alamant ie zero, A single element is also a subarray.
+
+5. next greater number
+Input: arr[] = [4, 5, 2, 25]
+Output:
+4  -> 5
+5  -> 25
+2  -> 25
+25 -> -1
+
+6. Find missing number from array with array size n-1, integer range from [1]- [n]
+Array: {1, 2, 5, 3), n= 4
+Output: (3, 4)
+
+7. Find repeating number from array with array size n, integer range from [0]- [n-1]
+Array: (1, 2, 4, 4, 3), n = 5
+Output: 4
+
+8. Find repeating and missing number, (Hint use Xor)
+Array: (3, 1, 2, 5, 3), n = 5
+Output: (3, 4)
+
+9. Subarray with Given Sum (positive & negative integer)
+Input: arr[] = (15, 2, 4, 8, 9, 5, 10, 23), sum = 23
+Output: 2 5
+Explanation: Sum of elements between indexes 2 and 5 is 2 + 4 + 8 + 9 = 23
+
+Input: arr[] = (2, 12, -2, - 20, 10), sum = -10
+Output: Sum found between indexes 1 to 3
+Explanation: Sum of elements between indexes 0 and 3 is 12 - 2 - 20 = -10
+
+10. Check if pair with the given Sum exists in Array
+11. Best Time to Buy and Sell Stock
+prices = {100, 180, 160, 310, 40, 535, 695};
+        655
+Stock Buy and Sell- Multiple Transaction Allowed
